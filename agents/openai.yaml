@@ -1,0 +1,3 @@
+interface:
+  display_name: "Open Claude UI"
+  short_description: "基于 open-claude-ui 构建 Claude 风格前端"

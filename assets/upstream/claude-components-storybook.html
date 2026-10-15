@@ -1,0 +1,3090 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Design System (CDS) - All Components Storybook</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React & ReactDOM 18 UMD -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel Standalone for in-browser JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Google Fonts: Inter (Sans), Newsreader (Serif), JetBrains Mono (Mono) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            clay: {
+              DEFAULT: '#d97757',
+              hover: '#cc5a36',
+              light: '#fbf3ef',
+              dark: '#e08264',
+            },
+            surface: {
+              0: 'var(--cds-surface-0)',
+              1: 'var(--cds-surface-1)',
+              2: 'var(--cds-surface-2)',
+              3: 'var(--cds-surface-3)',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'PingFang SC', 'sans-serif'],
+            serif: ['Newsreader', 'ui-serif', 'Georgia', 'Times New Roman', 'serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SF Mono', 'Menlo', 'monospace'],
+          },
+          borderRadius: {
+            'xs': 'var(--radius-xs, 2px)',
+            'sm': 'var(--radius-sm, 4px)',
+            'md': 'var(--radius-md, 6px)',
+            'lg': 'var(--radius-lg, 8px)',
+            'panel': 'var(--cds-panel-radius, 10px)',
+            'xl': 'var(--radius-xl, 12px)',
+            '2xl': 'var(--radius-2xl, 16px)',
+            'bubble': 'var(--cds-message-bubble-radius, 18px)',
+            'composer': 'var(--cds-radius-composer, 20px)',
+            'pill': 'var(--df-radius-pill, 999px)',
+          },
+          boxShadow: {
+            'card-subtle': '0 0 0 1px var(--cds-border), 0 2px 8px -2px rgba(0, 0, 0, 0.05)',
+            'panel': 'var(--cds-panel-shadow)',
+            'panel-hover': 'var(--cds-panel-shadow-hover)',
+            'sm': 'var(--cds-shadow-sm)',
+            'md': 'var(--cds-shadow-md)',
+            'lg': 'var(--cds-shadow-lg)',
+            'popover': 'var(--cds-shadow-popover)',
+            'composer': 'var(--cds-shadow-composer)',
+            'composer-hover': 'var(--cds-shadow-composer-hover)',
+            'composer-focus': 'var(--cds-shadow-composer-focus)',
+            'focus-glow': 'var(--cds-focus-shadow)',
+            'drop-glow': 'var(--cds-shadow-drop-glow)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ==========================================================================
+       Claude Design System (CDS) Production Design Tokens & Keyframes
+       Extracted directly from /Applications/Claude.app ion-dist production build
+       ========================================================================== */
+
+    :root {
+      --cds-surface-0: #f5f5f3;
+      --cds-surface-1: #fcfcfb;
+      --cds-surface-2: #ffffff;
+      --cds-surface-3: #ffffff;
+      --cds-surface-popover: #ffffff;
+      --cds-clay: #d97757;
+      --cds-clay-hover: #cc5a36;
+
+      /* Claude Official Alpha & Border Hierarchy */
+      --cds-alpha-0: hsla(0, 0%, 8%, 0);
+      --cds-alpha-1: hsla(0, 0%, 8%, 0.05); /* Ghost hover, skeleton, disabled */
+      --cds-alpha-2: hsla(0, 0%, 8%, 0.10); /* Standard border, secondary fill */
+      --cds-alpha-3: hsla(0, 0%, 8%, 0.20); /* Border strong, control hover */
+      --cds-alpha-4: hsla(0, 0%, 8%, 0.35); /* Border stronger, heavy divider */
+
+      --cds-border: var(--cds-alpha-2);
+      --cds-border-strong: var(--cds-alpha-3);
+      --cds-ring-hairline: 1px;
+
+      /* Claude Dual-Ring Architecture (Light Mode: 1px outer ring + diffuse shadow) */
+      --cds-ring-inner: 0px;
+      --cds-ring-outer: 1px;
+      --cds-ring-color: var(--cds-border);
+
+      /* Claude Official Elevation Shadow Hierarchy (Exact Extracted Tokens) */
+      --cds-shadow-color: rgba(0, 0, 0, 0.08);
+      --cds-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 2px 8px 0 var(--cds-shadow-color);
+      --cds-shadow-md: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 16px 0 var(--cds-shadow-color);
+      --cds-shadow-lg: 0 4px 8px 0 rgba(0, 0, 0, 0.06), 0 12px 28px -2px var(--cds-shadow-color);
+      --cds-shadow-popover: inset 0 0 0 var(--cds-ring-inner) var(--cds-ring-color), 
+                            0 0 0 var(--cds-ring-outer) var(--cds-ring-color), 
+                            0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+
+      --cds-panel-shadow: 0 0 0 1px var(--cds-border), var(--cds-shadow-sm);
+      --cds-panel-shadow-hover: 0 0 0 1px var(--cds-border-strong), 0 4px 16px -2px rgba(0, 0, 0, 0.09);
+
+      /* Claude Official Chat Composer Shadow Formula */
+      --cds-shadow-composer: 0 4px 20px rgba(0, 0, 0, 0.035), inset 0 0 0 1px var(--cds-border);
+      --cds-shadow-composer-hover: 0 4px 24px rgba(0, 0, 0, 0.06), inset 0 0 0 1px var(--cds-border-strong);
+      --cds-shadow-composer-focus: 0 4px 24px rgba(0, 0, 0, 0.08), inset 0 0 0 1px var(--cds-border-strong), 0 0 0 1px var(--cds-border-strong);
+
+      /* Triple-Layer Focus Ring & Drop Glow */
+      --cds-focus-shadow: inset 0 0 0 1px var(--cds-surface-1), 0 0 0 1.5px var(--cds-clay), 0 0 6px 1px rgba(217, 119, 87, 0.25);
+      --cds-shadow-drop-glow: inset 0 0 24px -2px rgba(217, 119, 87, 0.20), inset 0 0 0 2px var(--cds-clay);
+
+      /* Interactive Hover / Fill Tokens */
+      --cds-fill-ghost-hover: var(--cds-alpha-1);
+      --cds-fill-ghost-selected: var(--cds-alpha-2);
+      --cds-fill-secondary: var(--cds-alpha-2);
+      --cds-fill-secondary-hover: rgba(21, 21, 21, 0.14);
+
+      --cds-text-primary: #151515;
+      --cds-text-secondary: #525252;
+      --cds-text-muted: #8a8a8a;
+      --cds-bg-tint-blue: #f0f4f8;
+      --cds-segmented-track: rgba(0, 0, 0, 0.06);
+      --cds-segmented-thumb: #ffffff;
+
+      /* Claude Official Radius Hierarchy (Exact Extracted Tokens) */
+      --radius-xs: 2px;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --cds-panel-radius: 10px;
+      --radius-xl: 12px;
+      --radius-2xl: 16px;
+      --cds-message-bubble-radius: 18px;
+      --cds-radius-composer: 20px;
+      --df-radius-pill: 999px;
+    }
+
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx), (resolution >= 2x) {
+      :root {
+        --cds-ring-hairline: 0.5px;
+      }
+    }
+    @media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 3dppx), (resolution >= 3x) {
+      :root {
+        --cds-ring-hairline: calc(1px / 3);
+      }
+    }
+
+    .dark {
+      --cds-surface-0: #0b0b0a;
+      --cds-surface-1: #151515;
+      --cds-surface-2: #1a1a19;
+      --cds-surface-3: #20201e;
+      --cds-surface-popover: #222220;
+      --cds-clay: #d97757;
+      --cds-clay-hover: #e08264;
+
+      /* Claude Official Alpha & Border Hierarchy (Dark Mode) */
+      --cds-alpha-0: hsla(0, 0%, 100%, 0);
+      --cds-alpha-1: hsla(0, 0%, 100%, 0.05); /* Ghost hover, disabled */
+      --cds-alpha-2: hsla(0, 0%, 100%, 0.09); /* Standard border */
+      --cds-alpha-3: hsla(0, 0%, 100%, 0.18); /* Border strong */
+      --cds-alpha-4: hsla(0, 0%, 100%, 0.30); /* Heavy border */
+
+      --cds-border: var(--cds-alpha-2);
+      --cds-border-strong: var(--cds-alpha-3);
+
+      /* Claude Dual-Ring Architecture (Dark Mode: 1px inner rim highlight + 0px outer ring) */
+      --cds-ring-inner: 1px;
+      --cds-ring-outer: 0px;
+      --cds-ring-color: rgba(255, 255, 255, 0.10);
+
+      /* Claude Official Elevation Shadow Hierarchy (Dark Mode) */
+      --cds-shadow-color: rgba(0, 0, 0, 0.40);
+      --cds-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4), 0 2px 8px 0 var(--cds-shadow-color);
+      --cds-shadow-md: 0 2px 4px 0 rgba(0, 0, 0, 0.4), 0 6px 16px 0 var(--cds-shadow-color);
+      --cds-shadow-lg: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 16px 36px -2px var(--cds-shadow-color);
+      --cds-shadow-popover: inset 0 0 0 1px rgba(255, 255, 255, 0.10), 
+                            0 8px 28px rgba(0, 0, 0, 0.65), 0 2px 8px rgba(0, 0, 0, 0.45);
+
+      --cds-panel-shadow: 0 0 0 1px var(--cds-border), var(--cds-shadow-sm);
+      --cds-panel-shadow-hover: 0 0 0 1px var(--cds-border-strong), 0 6px 20px rgba(0, 0, 0, 0.6);
+
+      --cds-shadow-composer: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 0 1px var(--cds-border);
+      --cds-shadow-composer-hover: 0 4px 24px rgba(0, 0, 0, 0.55), inset 0 0 0 1px var(--cds-border-strong);
+      --cds-shadow-composer-focus: 0 4px 24px rgba(0, 0, 0, 0.65), inset 0 0 0 1px rgba(255, 255, 255, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.22);
+
+      --cds-focus-shadow: inset 0 0 0 1px var(--cds-surface-1), 0 0 0 1.5px var(--cds-clay), 0 0 8px 2px rgba(217, 119, 87, 0.35);
+      --cds-shadow-drop-glow: inset 0 0 24px -2px rgba(217, 119, 87, 0.30), inset 0 0 0 2px var(--cds-clay);
+
+      --cds-fill-ghost-hover: var(--cds-alpha-1);
+      --cds-fill-ghost-selected: var(--cds-alpha-2);
+      --cds-fill-secondary: var(--cds-alpha-2);
+      --cds-fill-secondary-hover: rgba(255, 255, 255, 0.14);
+
+      --cds-text-primary: #f5f5f5;
+      --cds-text-secondary: #a3a3a3;
+      --cds-text-muted: #666666;
+      --cds-bg-tint-blue: rgba(255, 255, 255, 0.06);
+      --cds-segmented-track: rgba(255, 255, 255, 0.08);
+      --cds-segmented-thumb: #2c2c2a;
+    }
+
+    /* CDS Elevation & Hover Utility Classes */
+    .cds-shadow-sm { box-shadow: var(--cds-shadow-sm) !important; }
+    .cds-shadow-md { box-shadow: var(--cds-shadow-md) !important; }
+    .cds-shadow-lg { box-shadow: var(--cds-shadow-lg) !important; }
+    .cds-shadow-popover { box-shadow: var(--cds-shadow-popover) !important; }
+    .cds-panel-shadow { box-shadow: var(--cds-panel-shadow) !important; }
+    
+    .cds-composer-shadow { 
+      box-shadow: var(--cds-shadow-composer) !important;
+      transition: box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1), border-color 220ms ease;
+    }
+    .cds-composer-shadow:hover { 
+      box-shadow: var(--cds-shadow-composer-hover) !important; 
+    }
+    .cds-composer-shadow:focus-within { 
+      box-shadow: var(--cds-shadow-composer-focus) !important; 
+    }
+
+    .cds-hover-ghost {
+      transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1), color 150ms ease, transform 100ms ease;
+    }
+    .cds-hover-ghost:hover {
+      background-color: var(--cds-fill-ghost-hover) !important;
+      color: var(--cds-text-primary) !important;
+    }
+    .cds-hover-ghost:active {
+      background-color: var(--cds-fill-ghost-selected) !important;
+      transform: scale(0.98);
+    }
+
+    .cds-card-interactive {
+      box-shadow: var(--cds-panel-shadow);
+      transition: box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1), transform 200ms cubic-bezier(0.16, 1, 0.3, 1), border-color 200ms ease;
+    }
+    .cds-card-interactive:hover {
+      box-shadow: var(--cds-panel-shadow-hover) !important;
+      transform: translateY(-1.5px);
+      border-color: var(--cds-border-strong) !important;
+    }
+    .cds-card-interactive:active {
+      transform: translateY(0);
+    }
+
+    .border-hairline {
+      border-width: var(--cds-ring-hairline);
+    }
+
+    /* 1. 暗色模式光学减薄补偿 (Irradiation Compensation) */
+    .dark .font-medium, .dark [data-optical-compensate] {
+      font-variation-settings: "wght" 465;
+    }
+    .dark .font-semibold {
+      font-variation-settings: "wght" 560;
+    }
+    .dark .font-bold {
+      font-variation-settings: "wght" 660;
+    }
+
+    /* 2. 行内图标光学负偏置 */
+    .align-neg-125 { vertical-align: -0.125em; }
+    .align-neg-075 { vertical-align: -0.075em; }
+    .align-neg-1px  { vertical-align: -1px; }
+
+    /* 3. 文本换行约束 */
+    .text-balance-native { text-wrap: balance; }
+    .text-pretty-native  { text-wrap: pretty; }
+    .overflow-wrap-anywhere { overflow-wrap: anywhere; word-break: normal; }
+
+    /* 4. 等宽数字约束 */
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
+    }
+
+    /* 5. 核心关键帧动画 (真实提取) */
+    @keyframes _grapheme-reveal_1plog_1 {
+      0%   { opacity: 0; filter: blur(6px); }
+      100% { opacity: 1; filter: blur(0); }
+    }
+
+    @keyframes timeline-quiet-dot {
+      0%, 8%   { opacity: 0.2; transform: translateY(2px); }
+      22%      { opacity: 1; transform: translateY(-3px); }
+      36%, 70% { opacity: 1; transform: translateY(0); }
+      90%, 100%{ opacity: 0.2; transform: translateY(0); }
+    }
+
+    @keyframes message-fade-up {
+      0%   { opacity: 0; transform: translateY(12px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes saved-check-decay {
+      0%, 75% { opacity: 1; transform: scale(1); }
+      100%    { opacity: 0; transform: scale(0.92); }
+    }
+
+    @keyframes cds-skeleton-sweep {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes dframe-clay-breathe {
+      0%, 100% { filter: brightness(0.96); transform: scale(0.92); }
+      50%      { filter: brightness(1.08); transform: scale(1.08); }
+    }
+
+    @keyframes dframe-dot-pulse {
+      0%, 100% { opacity: 0.3; transform: scale(0.85); }
+      50%      { opacity: 1; transform: scale(1.15); }
+    }
+
+    @keyframes file-thumbnail-grow-in {
+      0%   { opacity: 0; transform: scale(0.85); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes file-thumbnail-upload-pulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+
+    /* 骨架屏扫光条 */
+    .skeleton-shimmer {
+      position: relative;
+      overflow: hidden;
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    .dark .skeleton-shimmer {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    .skeleton-shimmer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+      animation: cds-skeleton-sweep 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .dark .skeleton-shimmer::after {
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+    }
+
+    /* 容器查询自适应定义 */
+    @container (max-width: 254px) {
+      .df-pill-label-collapsible { display: none !important; }
+      .df-pill-collapsible { padding: 0 4px !important; }
+    }
+
+    /* 6. X-Ray 边框透视检测器样式 (Borders & Anti-Bloat Inspector) */
+    .xray-active [class*="border"]:not([class*="border-b"]):not([class*="border-t"]):not([class*="border-l"]):not([class*="border-r"]):not([class*="border-0"]) {
+      outline: 2px dashed #06b6d4 !important;
+      outline-offset: 1px !important;
+    }
+    .xray-active [class*="border"]:not([class*="border-b"]):not([class*="border-t"]):not([class*="border-l"]):not([class*="border-r"]):not([class*="border-0"]) [class*="border"]:not([class*="border-b"]):not([class*="border-t"]):not([class*="border-l"]):not([class*="border-r"]):not([class*="border-0"]) {
+      outline: 2px solid #ef4444 !important;
+      outline-offset: 2px !important;
+      background-color: rgba(239, 68, 68, 0.07) !important;
+    }
+    .xray-active [class*="border-b"],
+    .xray-active [class*="border-t"],
+    .xray-active [class*="border-l"],
+    .xray-active [class*="border-r"] {
+      border-color: #8b5cf6 !important;
+      border-style: dashed !important;
+    }
+  </style>
+</head>
+<body class="h-full bg-[#fcfcfb] text-[#151515] font-sans antialiased selection:bg-[#d97757]/20 selection:text-[#d97757]">
+  <div id="root" class="h-full"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // ==========================================================================
+    // Phosphor & Claude Native Vector SVG Icon System
+    // Coordinates: viewBox="0 0 256 256" (Phosphor Icons Architecture)
+    // ==========================================================================
+    function Icon({ name, size = "md", weight = "regular", duotone = false, className = "", style = {} }) {
+      const sizePx = {
+        xs: 12,
+        sm: 14,
+        md: 16,
+        lg: 20,
+        xl: 24,
+        xxl: 32,
+      }[size] || (typeof size === "number" ? size : 16);
+
+      // Claude Official Spark ✦ (from SVG path)
+      if (name === "spark") {
+        return (
+          <svg viewBox="0 0 100 100" width={sizePx} height={sizePx} fill="currentColor" className={`inline-block align-neg-125 shrink-0 ${className}`} style={style}>
+            <path d="m19.6 66.5 19.7-11 .3-1-.3-.5h-1l-3.3-.2-11.2-.3L14 53l-9.5-.5-2.4-.5L0 49l.2-1.5 2-1.3 2.9.2 6.3.5 9.5.6 6.9.4L38 49.1h1.6l.2-.7-.5-.4-.4-.4L29 41l-10.6-7-5.6-4.1-3-2-1.5-2-.6-4.2 2.7-3 3.7.3.9.2 3.7 2.9 8 6.1L37 36l1.5 1.2.6-.4.1-.3-.7-1.1L33 25l-6-10.4-2.7-4.3-.7-2.6c-.3-1-.4-2-.4-3l3-4.2L28 0l4.2.6L33.8 2l2.6 6 4.1 9.3L47 29.9l2 3.8 1 3.4.3 1h.7v-.5l.5-7.2 1-8.7 1-11.2.3-3.2 1.6-3.8 3-2L61 2.6l2 2.9-.3 1.8-1.1 7.7L59 27.1l-1.5 8.2h.9l1-1.1 4.1-5.4 6.9-8.6 3-3.5L77 13l2.3-1.8h4.3l3.1 4.7-1.4 4.9-4.4 5.6-3.7 4.7-5.3 7.1-3.2 5.7.3.4h.7l12-2.6 6.4-1.1 7.6-1.3 3.5 1.6.4 1.6-1.4 3.4-8.2 2-9.6 2-14.3 3.3-.2.1.2.3 6.4.6 2.8.2h6.8l12.6 1 3.3 2 1.9 2.7-.3 2-5.1 2.6-6.8-1.6-16-3.8-5.4-1.3h-.8v.4l4.6 4.5 8.3 7.5L89 80.1l.5 2.4-1.3 2-1.4-.2-9.2-7-3.6-3-8-6.8h-.5v.7l1.8 2.7 9.8 14.7.5 4.5-.7 1.4-2.6 1-2.7-.6-5.8-8-6-9-4.7-8.2-.5.4-2.9 30.2-1.3 1.5-3 1.2-2.5-2-1.4-3 1.4-6.2 1.6-8 1.3-6.4 1.2-7.9.7-2.6v-.2H49L43 72l-9 12.3-7.2 7.6-1.7.7-3-1.5.3-2.8L24 86l10-12.8 6-7.9 4-4.6-.1-.5h-.3L17.2 77.4l-4.7.6-2-2 .2-3 1-1 8-5.5Z"/>
+          </svg>
+        );
+      }
+
+      const paths = {
+        chat: "M216,48H40A16,16,0,0,0,24,64V224a8,8,0,0,0,13.66,5.66L73.31,192H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48ZM216,176H70a8,8,0,0,0-5.66,2.34L40,202.34V64H216Z",
+        layers: "M227.69,83.69l-96-56a8,8,0,0,0-7.38,0l-96,56a8,8,0,0,0,0,14.62l96,56a8,8,0,0,0,7.38,0l96-56a8,8,0,0,0,0-14.62ZM128,138.86,47.88,91,128,43.14,208.12,91Zm99.69,32.45-96,56a8,8,0,0,1-7.38,0l-96-56a8,8,0,0,1,7.38-14.62l92.31,53.85,92.31-53.85a8,8,0,0,1,7.38,14.62Z",
+        fileCode: "M181.66,146.34a8,8,0,0,1,0,11.32l-24,24a8,8,0,0,1-11.32-11.32L164.69,152l-18.35-18.34a8,8,0,0,1,11.32-11.32Zm-72-24a8,8,0,0,0-11.32,0l-24,24a8,8,0,0,0,0,11.32l24,24a8,8,0,0,0,11.32-11.32L91.31,152l18.35-18.34A8,8,0,0,0,109.66,122.34ZM216,88V216a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V40A16,16,0,0,1,56,24h96a8,8,0,0,1,5.66,2.34l56,56A8,8,0,0,1,216,88Zm-56-8h28.69L160,51.31Zm40,136V96H152a8,8,0,0,1-8-8V40H56V216H200Z",
+        fileText: "M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z",
+        copy: "M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z",
+        check: "M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z",
+        arrowRight: "M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z",
+        plus: "M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z",
+        search: "M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z",
+        chevronDown: "M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z",
+        chevronUp: "M213.66,154.34a8,8,0,0,0,0-11.32l-80-80a8,8,0,0,0-11.32,0l-80,80a8,8,0,0,0,11.32,11.32L128,91.31l74.34,74.35A8,8,0,0,0,213.66,154.34Z",
+        settings: "M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm103.28-40.45-18.72-6.51a87.62,87.62,0,0,0-6.19-14.93l9.83-17.26a8,8,0,0,0-1.42-9.71l-16-16a8,8,0,0,0-9.71-1.42L171.81,63.55a87.62,87.62,0,0,0-14.93-6.19L150.37,38.64a8,8,0,0,0-7.7-6.64H119.33a8,8,0,0,0-7.7,6.64l-6.51,18.72a87.62,87.62,0,0,0-14.93,6.19L72.93,53.72a8,8,0,0,0-9.71,1.42l-16,16a8,8,0,0,0-1.42,9.71L55.63,98.11a87.62,87.62,0,0,0-6.19,14.93L30.72,119.55a8,8,0,0,0-6.64,7.7v22.64a8,8,0,0,0,6.64,7.7l18.72,6.51a87.62,87.62,0,0,0,6.19,14.93l-9.83,17.26a8,8,0,0,0,1.42,9.71l16,16a8,8,0,0,0,9.71,1.42l17.26-9.83a87.62,87.62,0,0,0,14.93,6.19l6.51,18.72a8,8,0,0,0,7.7,6.64h22.64a8,8,0,0,0,7.7-6.64l6.51-18.72a87.62,87.62,0,0,0,14.93-6.19l17.26,9.83a8,8,0,0,0,9.71-1.42l16-16a8,8,0,0,0,1.42-9.71l-9.83-17.26a87.62,87.62,0,0,0,6.19-14.93l18.72-6.51a8,8,0,0,0,6.64-7.7V127.25A8,8,0,0,0,231.28,119.55Z",
+        trash: "M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z",
+        pin: "M220.24,147.76l-36-36a8,8,0,0,0-5.66-2.34H168V48a8,8,0,0,0-8-8H96a8,8,0,0,0-8,8V109.42H77.42a8,8,0,0,0-5.66,2.34l-36,36A8,8,0,0,0,40,160H120v64a8,8,0,0,0,16,0V160h80a8,8,0,0,0,4.24-12.24ZM104,56h48V96H104Zm92.69,88H59.31l20-20H176.69Z",
+        user: "M231.88,175.08A104.16,104.16,0,0,0,170.35,124a56,56,0,1,0-84.7,0A104.16,104.16,0,0,0,24.12,175.08a8,8,0,1,0,13.76,8.18A88.16,88.16,0,0,1,128,144a88.16,88.16,0,0,1,90.12,39.26,8,8,0,0,0,13.76-8.18ZM88,88a40,40,0,1,1,40,40A40,40,0,0,1,88,88Z",
+        code: "M69.66,154.34a8,8,0,0,1-11.32,11.32l-40-40a8,8,0,0,1,0-11.32l40-40a8,8,0,0,1,11.32,11.32L37.31,120Zm168-34.34-40-40a8,8,0,0,0-11.32,11.32L218.69,120l-32.35,32.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,237.66,120ZM149.83,43.43a8,8,0,0,0-10.4,4.74l-48,144a8,8,0,0,0,4.74,10.4,8.27,8.27,0,0,0,2.83.51,8,8,0,0,0,7.57-5.25l48-144A8,8,0,0,0,149.83,43.43Z",
+        terminal: "M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM69.66,82.34a8,8,0,0,0-11.32,11.32L84.69,120,58.34,146.34a8,8,0,0,0,11.32,11.32l32-32a8,8,0,0,0,0-11.32ZM128,152h48a8,8,0,0,0,0-16H128a8,8,0,0,0,0,16Z",
+        dotsVertical: "M128,96a24,24,0,1,0-24-24A24,24,0,0,0,128,96Zm0,8a24,24,0,1,0,24,24A24,24,0,0,0,128,104Zm0,56a24,24,0,1,0,24,24A24,24,0,0,0,128,160Z",
+        bulb: "M128,24A80.09,80.09,0,0,0,48,104a79.23,79.23,0,0,0,24.38,56.62A48.09,48.09,0,0,1,88,184.8V200a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V184.8a48.09,48.09,0,0,1,15.62-24.18A79.23,79.23,0,0,0,208,104,80.09,80.09,0,0,0,128,24Zm24,176H104V192h48Zm0-24H104v-3.2a63.79,63.79,0,0,0-19.8-44.57A64,64,0,1,1,192,104a63.38,63.38,0,0,1-19.8,45.23A63.79,63.79,0,0,0,152,176Z",
+        sparkles: "M216.49,104.49l-56-16-16-56a8,8,0,0,0-15,0l-16,56-56,16a8,8,0,0,0,0,15l56,16,16,56a8,8,0,0,0,15,0l16-56,56-16a8,8,0,0,0,0-15ZM136,128a8,8,0,0,0-5.66-5.66l-41.6-11.89,41.6-11.89A8,8,0,0,0,136,93l11.89-41.6,11.89,41.6a8,8,0,0,0,5.66,5.66l41.6,11.89-41.6,11.89A8,8,0,0,0,160,128l-11.89,41.6ZM224,184l-18.7-5.34L200,160a8,8,0,0,0-15,0l-5.34,18.7L161,184a8,8,0,0,0,0,15l18.7,5.34L185,223a8,8,0,0,0,15,0l5.34-18.7L224,199a8,8,0,0,0,0-15Z",
+        externalLink: "M224,104a8,8,0,0,0-8,8v96H40V40h96a8,8,0,0,0,0-16H32A16,16,0,0,0,16,40V216a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V112A8,8,0,0,0,224,104Zm13.66-82.34a8,8,0,0,0-8.48-2.12l-64,16a8,8,0,0,0,3.88,15.52L204.69,43.31,122.34,125.66a8,8,0,0,0,11.32,11.32L216,54.69l-7.06,35.63a8,8,0,0,0,7.76,9.54,8.19,8.19,0,0,0,1.94-.24l16-64A8,8,0,0,0,237.66,21.66Z",
+        play: "M232.4,114.49,88.32,26.35A16,16,0,0,0,64,40.2V215.8a16,16,0,0,0,24.32,13.85L232.4,141.51A16,16,0,0,0,232.4,114.49ZM80,215.8V40.2L224,128Z",
+        thumbsUp: "M234,80.12A24,24,0,0,0,216,72H160V40a32,32,0,0,0-32-32,8,8,0,0,0-7.16,4.42L85.16,84H40A24,24,0,0,0,16,108v96a24,24,0,0,0,24,24H195.42a24,24,0,0,0,23.32-18.42l18.42-83A24.08,24.08,0,0,0,234,80.12ZM32,108a8,8,0,0,1,8-8H80v112H40a8,8,0,0,1-8-8Zm189.55,34.82-18.42,83a8,8,0,0,1-7.77,6.18H96V97.38l34.47-69A16,16,0,0,1,144,40V80a8,8,0,0,0,8,8h64a8,8,0,0,1,6,2.69,7.88,7.88,0,0,1,1.9,6.29A8.18,8.18,0,0,1,221.55,142.82Z",
+        thumbsDown: "M237.45,113.18l-18.42-83A24,24,0,0,0,195.71,12H40A24,24,0,0,0,16,36v96a24,24,0,0,0,24,24H85.16l35.68,71.58A8,8,0,0,0,128,232a32,32,0,0,0,32-32V168h56a24,24,0,0,0,21.45-34.82ZM32,36a8,8,0,0,1,8-8H80V140H40a8,8,0,0,1-8-8Zm189.91,73.18H160a8,8,0,0,0-8,8v40a16,16,0,0,1-13.53,15.82L104,142.62V28H195.71a8,8,0,0,1,7.77,6.18l18.42,83A8,8,0,0,1,221.91,109.18Z",
+        paperclip: "M208.28,125.66l-80,80a56,56,0,0,1-79.2-79.2l96-96a40,40,0,0,1,56.56,56.56l-96,96a24,24,0,0,1-33.94-33.94l80-80a8,8,0,0,1,11.32,11.32l-80,80a8,8,0,0,0,11.32,11.32l96-96a24,24,0,0,0-33.94-33.94l-96,96a40,40,0,0,0,56.56,56.56l80-80a8,8,0,0,1,11.32,11.32Z",
+        upload: "M216,144v56a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V144a8,8,0,0,1,16,0v56H200V144a8,8,0,0,1,16,0Zm-85.66-93.66a8,8,0,0,0-11.32,0l-40,40a8,8,0,0,0,11.32,11.32L120,71.31V152a8,8,0,0,0,16,0V71.31l29.66,29.65a8,8,0,0,0,11.32-11.32Z",
+        image: "M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM152,108a12,12,0,1,1,12-12A12,12,0,0,1,152,108Zm40,68H64a8,8,0,0,1-6.15-13.12l32-40a8,8,0,0,1,12.3,0l19.85,24.81,27.85-34.81a8,8,0,0,1,12.3,0l40,50A8,8,0,0,1,192,176Z"
+      };
+
+      const path = paths[name] || paths.spark;
+      const isBold = weight === "bold" || weight === 700;
+
+      return (
+        <svg
+          viewBox="0 0 256 256"
+          width={sizePx}
+          height={sizePx}
+          fill="currentColor"
+          className={`inline-block align-neg-125 shrink-0 transition-transform ${className}`}
+          style={style}
+        >
+          {duotone && (
+            <path d={path} fill="currentColor" opacity="0.25" transform="scale(0.96) translate(5, 5)" />
+          )}
+          <path
+            d={path}
+            stroke={isBold ? "currentColor" : "none"}
+            strokeWidth={isBold ? "10" : "0"}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+    }
+
+    // ==========================================================================
+    // Category Section Header Component
+    // ==========================================================================
+    function SectionHeader({ id, number, title, enTitle, description, badge }) {
+      return (
+        <div id={id} className="pt-12 pb-6 border-b border-neutral-200 dark:border-neutral-800 scroll-mt-24">
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+            <div className="flex items-center gap-3">
+              <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-clay/10 text-clay">
+                {number}
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+                {title} <span className="text-sm font-normal text-neutral-400 font-mono ml-1.5">{enTitle}</span>
+              </h2>
+            </div>
+            {badge && (
+              <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 font-medium self-start sm:self-auto">
+                {badge}
+              </span>
+            )}
+          </div>
+          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-2 max-w-3xl leading-relaxed">
+            {description}
+          </p>
+        </div>
+      );
+    }
+
+    // ==========================================================================
+    // Component Showcase Card Shell (With Exact Radii and Padding)
+    // ==========================================================================
+    function ComponentShowcase({ title, tag, code, description, children, className = "" }) {
+      const [showCode, setShowCode] = useState(false);
+      const [copied, setCopied] = useState(false);
+
+      const copySnippet = () => {
+        if (!code) return;
+        navigator.clipboard.writeText(code);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      };
+
+      return (
+        <div className={`rounded-xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1a1a19] shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col ${className}`}>
+          {/* Card Header */}
+          <div className="px-5 py-3 border-b border-neutral-100 dark:border-neutral-800/80 bg-neutral-50/50 dark:bg-neutral-900/40 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 tracking-tight">{title}</h3>
+              {tag && (
+                <code className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-neutral-200/60 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
+                  {tag}
+                </code>
+              )}
+            </div>
+            {code && (
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={copySnippet}
+                  className="px-2 py-1 rounded-md text-[11px] font-mono text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-200 transition-colors flex items-center gap-1"
+                  title="复制代码"
+                >
+                  <Icon name={copied ? "check" : "copy"} size="xs" className={copied ? "text-green-500" : ""} />
+                  <span>{copied ? "Copied" : "Copy"}</span>
+                </button>
+                <button
+                  onClick={() => setShowCode(!showCode)}
+                  className={`px-2 py-1 rounded-md text-[11px] font-mono transition-colors ${showCode ? "bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100" : "text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-300"}`}
+                >
+                  Code
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Description */}
+          {description && (
+            <div className="px-5 pt-3 pb-1 text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
+              {description}
+            </div>
+          )}
+
+          {/* Canvas Area */}
+          <div className="p-5 flex-1 flex flex-col justify-center">
+            {children}
+          </div>
+
+          {/* Collapsible Code Drawer */}
+          {showCode && code && (
+            <div className="border-t border-neutral-100 dark:border-neutral-800 bg-[#0d0d0c] text-neutral-300 p-4 font-mono text-xs overflow-x-auto leading-relaxed">
+              <pre>{code}</pre>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ==========================================================================
+    // 1. SECTION: Foundations & Design Tokens
+    // ==========================================================================
+    function FoundationsSection({ isDark }) {
+      const [selectedTypoFilter, setSelectedTypoFilter] = useState("all");
+      const [activeShadowTab, setActiveShadowTab] = useState("composer");
+      const [playgroundState, setPlaygroundState] = useState("hover over any element");
+      const [hairlineCompare, setHairlineCompare] = useState("hairline");
+
+      const surfaces = [
+        { name: "Surface 0", role: "底基层 / 边框底色", light: "#f5f5f3", dark: "#0b0b0a", desc: "侧边栏最底色、无边框外壳" },
+        { name: "Surface 1", role: "主画布背景", light: "#fcfcfb", dark: "#151515", desc: "主会话页面底色，极致温润" },
+        { name: "Surface 2", role: "独立卡片 / 面板", light: "#ffffff", dark: "#1a1a19", desc: "消息气泡外围、独立卡片底色" },
+        { name: "Surface 3", role: "输入框 / 最高层", light: "#ffffff", dark: "#20201e", desc: "聊天输入框、弹出浮层顶色" },
+      ];
+
+      const clayColors = [
+        { name: "Clay Base", hex: "#d97757", tag: "主品牌色", desc: "品牌 Spark 图标、主按钮、思考点" },
+        { name: "Clay Hover", hex: "#cc5a36", tag: "强调加深", desc: "悬停态、聚焦边框" },
+        { name: "Clay Tint", hex: "#fbf3ef", tag: "浅底衬", desc: "徽章背景、高亮浅衬底" },
+      ];
+
+      // 提取自 Claude.app 的真实圆角体系
+      const radiusTokens = [
+        { token: "--radius-xs", px: "2px", role: "微小分割指示器", cls: "rounded-xs" },
+        { token: "--radius-sm", px: "4px", role: "键盘按键、代码微章", cls: "rounded-sm" },
+        { token: "--radius-md", px: "6px", role: "XS 按钮 (24px)、紧凑标签", cls: "rounded-md" },
+        { token: "--radius-lg", px: "8px", role: "SM/MD 按钮、输入框、附件磁贴", cls: "rounded-lg" },
+        { token: "--cds-panel-radius", px: "10px", role: "工具栏面板、次级卡片", cls: "rounded-[10px]" },
+        { token: "--radius-xl", px: "12px", role: "LG 按钮 (40px)、代码块、产物卡片", cls: "rounded-xl" },
+        { token: "--radius-2xl", px: "16px", role: "模态弹窗 (Dialog)、主外壳", cls: "rounded-2xl" },
+        { token: "--cds-message-bubble-radius", px: "18px", role: "用户消息提问气泡", cls: "rounded-[18px]" },
+        { token: "--cds-radius-composer", px: "20px", role: "核心 Chat Composer 输入终端", cls: "rounded-[20px]" },
+        { token: "--df-radius-pill", px: "999px", role: "分段滑动胶囊、状态呼吸灯、头像", cls: "rounded-full" },
+      ];
+
+      // 官方 CDS 7 阶排版音阶体系
+      const typographyTiers = [
+        { name: "caption", token: "--cds-font-size-caption", px: "10px ~ 11px", leading: "16px (1.55)", weight: "500 / 580", role: "微型标签、快捷键徽章 (Kbd)、时间戳、模型角标", specimen: "Sonnet 3.7 • 10:24 AM • ⌘K", calcPx: "11px", calcLh: "16px" },
+        { name: "footnote", token: "--cds-font-size-footnote", px: "11px ~ 12px", leading: "14px (1.25)", weight: "400 / 500", role: "辅助说明、文件大小 (4.2 KB)、Token 统计、次级元信息", specimen: "design-tokens.json • 4.2 KB • 2,410 tokens", calcPx: "12px", calcLh: "14px" },
+        { name: "code", token: "--cds-font-size-code", px: "11px ~ 12px", leading: "16px (1.42)", weight: "400 (Mono)", role: "代码块、行内代码、Git Diff 差异对比", specimen: "const scale = calc(16 / 17); // 0.941", calcPx: "12px", calcLh: "16px" },
+        { name: "body (基准)", token: "--cds-font-size-body", px: "12px ~ 14px", leading: "18px (1.46)", weight: "400 (深色减薄 360)", role: "AI 助手对话正文、用户提问气泡、输入框文本、表单输入", specimen: "在深色背景下，高对比度白字因视网膜光渗效应在视觉上会比实际粗约 10%~15%。", calcPx: "14px", calcLh: "20px" },
+        { name: "prose", token: "--cds-font-size-prose", px: "14px ~ 16px", leading: "22px (1.45)", weight: "400 / 500", role: "长文排版段落、Artifacts 独立文档正文、长回复段落", specimen: "Claude Desktop 采用低对比度表面分层与无边框流式排版，打造通透呼吸感。", calcPx: "15px", calcLh: "22px" },
+        { name: "heading", token: "--cds-font-size-heading", px: "13px ~ 15px", leading: "17px (1.29)", weight: "580 / 600", role: "卡片小节标题、弹窗对话框标题 (Modal Title)、代码语言", specimen: "Delete Conversation? • TypeScript • IrradiationCompensation.css", calcPx: "16px", calcLh: "20px" },
+        { name: "title", token: "--cds-font-size-title", px: "19px ~ 21px", leading: "24px (1.25)", weight: "580 / 600", role: "主页面大标题、Project 项目名称、全屏视窗顶部一级标题", specimen: "Claude Design System (CDS) • v1.28 Production", calcPx: "20px", calcLh: "24px" },
+      ];
+
+      // 核心内容场景排版规则映射表
+      const contentTypographyMap = [
+        { area: "chat", element: "助手身份标识 ('Claude')", size: "12px", weight: "580 (Semibold)", font: "Sans", roleDesc: "顶栏身份锚点，字重微调至 580" },
+        { area: "chat", element: "模型版本角标 ('Sonnet 3.7')", size: "10px", weight: "500 (Medium)", font: "Mono", roleDesc: "等宽微徽章，4px 圆角" },
+        { area: "chat", element: "消息时间戳 ('10:24 AM')", size: "11px", weight: "400 (Regular)", font: "Mono", roleDesc: "等宽数字，次级弱化灰度" },
+        { area: "chat", element: "助手回复正文 (Prose Body)", size: "14px (默认)", weight: "400 (深色减薄 360)", font: "Sans", roleDesc: "1.42857 行高，0.75lh 段间距" },
+        { area: "chat", element: "用户提问气泡", size: "14px", weight: "400 (Regular)", font: "Sans", roleDesc: "与助手正文同字号，18px 圆角" },
+        { area: "chat", element: "思考折叠触发器 ('Thought for 3.8s')", size: "12px", weight: "500 (Medium)", font: "Sans", roleDesc: "Medium 强化可点击感，text-muted" },
+        { area: "chat", element: "思考链内部日志", size: "11px ~ 12px", weight: "400 (Regular)", font: "Mono", roleDesc: "代码级日志缩进排版，2px 左引导线" },
+        { area: "composer", element: "主输入框文字 (Textarea)", size: "14px", weight: "400 (Regular)", font: "Sans", roleDesc: "与正文同级，field-sizing 自撑开" },
+        { area: "composer", element: "输入框占位符 (Placeholder)", size: "14px", weight: "400 (Regular)", font: "Sans", roleDesc: "text-neutral-400 弱化提示" },
+        { area: "composer", element: "操作按钮 ('+ Add content')", size: "12px", weight: "500 (Medium)", font: "Sans", roleDesc: "Ghost 变体，图标 -0.125em 负偏置" },
+        { area: "composer", element: "发送主按钮 (Send)", size: "12px", weight: "500 (Medium)", font: "Sans", roleDesc: "实心陶土色胶囊，按压弹性缩放" },
+        { area: "artifacts", element: "代码块语法高亮", size: "12px ~ 13px", weight: "400 (Regular)", font: "Mono", roleDesc: "Fira Code/Menlo，1.46 行高，tabular-nums" },
+        { area: "artifacts", element: "Artifact 卡片标题", size: "13px", weight: "580 (Semibold)", font: "Sans", roleDesc: "单行截断，高优先级识别" },
+        { area: "artifacts", element: "附件文件名 / 大小", size: "12px / 10px", weight: "500 / 400", font: "Sans / Mono", roleDesc: "文件名称中粗，体积等宽弱化" },
+        { area: "controls", element: "标准按钮 (SM 32px / MD 38px)", size: "13px / 14px", weight: "500 (Medium)", font: "Sans", roleDesc: "中粗视觉抓手，active:scale-95" },
+        { area: "controls", element: "分段滑动胶囊 Tab", size: "12px", weight: "400 / 500 (激活)", font: "Sans", roleDesc: "激活态切换中粗，绝对几何滑动" },
+        { area: "controls", element: "弹窗标题 (Modal Title)", size: "15px ~ 16px", weight: "580 (Semibold)", font: "Sans", roleDesc: "强边界阻断，Semibold 强调" },
+        { area: "controls", element: "快捷键徽章 (Kbd)", size: "10px ~ 11px", weight: "580 (Semibold)", font: "Mono", roleDesc: "按键微型轮廓，内凹投影" },
+      ];
+
+      const filteredMap = selectedTypoFilter === "all" ? contentTypographyMap : contentTypographyMap.filter((m) => m.area === selectedTypoFilter);
+
+      return (
+        <div className="space-y-6">
+          {/* 1.1 表面系统 */}
+          <div>
+            <h4 className="text-xs font-mono uppercase text-neutral-400 mb-3 tracking-wider">1.1 四层表面微对比系统 (Surfaces 0 ~ 3)</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {surfaces.map((s, idx) => (
+                <div key={idx} className="rounded-xl border border-neutral-200/80 dark:border-neutral-800 p-4 bg-white dark:bg-[#1a1a19] shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{s.name}</span>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-500">
+                        {isDark ? s.dark : s.light}
+                      </span>
+                    </div>
+                    <div className="text-xs font-medium text-clay mt-1">{s.role}</div>
+                    <p className="text-[11px] text-neutral-400 mt-1 leading-snug">{s.desc}</p>
+                  </div>
+                  <div
+                    className="h-10 rounded-lg mt-3 border border-neutral-200/60 dark:border-neutral-700/60 flex items-center justify-center text-xs font-mono font-medium shadow-inner"
+                    style={{ backgroundColor: isDark ? s.dark : s.light, color: isDark ? "#ffffff" : "#151515" }}
+                  >
+                    Sample Fill
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 1.2 真实圆角体系阶梯对比表 */}
+          <div className="rounded-xl border border-neutral-200/80 dark:border-neutral-800 p-5 bg-white dark:bg-[#1a1a19] space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <div>
+                <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  1.2 生产环境全量圆角阶梯与规范系统 (Border Radius Hierarchy)
+                </h4>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  Claude 并非全盘使用同一种圆角，而是从 2px 到 999px 构建了严格的视觉阶梯（输入框固定 20px，用户气泡 18px，标准控件 8px）：
+                </p>
+              </div>
+              <span className="text-xs font-mono text-clay shrink-0">AST-Extracted Radii</span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 pt-2">
+              {radiusTokens.map((r, i) => (
+                <div key={i} className="p-3 rounded-lg bg-neutral-50 dark:bg-neutral-900/60 border border-neutral-100 dark:border-neutral-800 flex flex-col justify-between space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono font-bold text-neutral-900 dark:text-neutral-100">{r.px}</span>
+                    <code className="text-[10px] text-clay">{r.cls}</code>
+                  </div>
+                  {/* Visual Specimen Box */}
+                  <div className="h-12 w-full bg-white dark:bg-neutral-800 border-2 border-clay/40 shadow-xs flex items-center justify-center text-[10px] font-mono text-neutral-500" style={{ borderRadius: r.px }}>
+                    Radius Box
+                  </div>
+                  <div className="text-[10px] text-neutral-500 leading-tight">
+                    {r.role}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 1.3 陶土品牌色与中性灰阶 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="rounded-xl border border-neutral-200/80 dark:border-neutral-800 p-4 bg-white dark:bg-[#1a1a19]">
+              <h4 className="text-xs font-mono uppercase text-neutral-400 mb-3 tracking-wider">1.3 陶土品牌调色板 (Editorial Warm Clay)</h4>
+              <div className="space-y-2">
+                {clayColors.map((c, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-neutral-50 dark:bg-neutral-900/60">
+                    <div className="flex items-center gap-3">
+                      <div className="size-8 rounded-lg shadow-xs shrink-0" style={{ backgroundColor: c.hex }} />
+                      <div>
+                        <div className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">{c.name}</div>
+                        <div className="text-[11px] text-neutral-400">{c.desc}</div>
+                      </div>
+                    </div>
+                    <code className="text-xs font-mono text-clay">{c.hex}</code>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-neutral-200/80 dark:border-neutral-800 p-4 bg-white dark:bg-[#1a1a19]">
+              <h4 className="text-xs font-mono uppercase text-neutral-400 mb-3 tracking-wider">1.4 灰阶与功能微调色 (Neutral Grays & Tints)</h4>
+              <div className="grid grid-cols-5 gap-1.5 mb-3">
+                {["#f9f9f8", "#f2f2f0", "#e5e5e3", "#d4d4d1", "#a3a3a0", "#737370", "#525250", "#40403e", "#262624", "#151515"].map((hex, i) => (
+                  <div key={i} className="flex flex-col items-center">
+                    <div className="h-8 w-full rounded border border-neutral-200/40 dark:border-neutral-700/40" style={{ backgroundColor: hex }} />
+                    <span className="text-[9px] font-mono text-neutral-400 mt-1">{i * 100 || 50}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="p-2.5 rounded-lg bg-[#f0f4f8] dark:bg-white/5 border border-blue-100 dark:border-neutral-800 flex items-center justify-between text-xs">
+                <span className="font-medium text-neutral-700 dark:text-neutral-300">用户气泡冷灰蓝底色 <code className="text-[11px]">--cds-bg-tint-blue</code></span>
+                <code className="font-mono text-blue-600 dark:text-blue-400">#f0f4f8</code>
+              </div>
+            </div>
+          </div>
+
+          {/* 1.5 生产环境全量排版字号阶梯标尺 (7-Tier Typography Scale Matrix) */}
+          <div className="rounded-xl border border-neutral-200/80 dark:border-neutral-800 p-5 bg-white dark:bg-[#1a1a19] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <div>
+                <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  1.5 官方排版字号阶梯标尺 (7-Tier Typography Scale & Line-Heights)
+                </h4>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  Claude 桌面端基于 <code>--cds-rem-scale: calc(16/17)</code> 紧凑缩放系数，定义了从 Caption (10px) 到 Title (20px) 的完整 7 级排版音阶与自适应行高：
+                </p>
+              </div>
+              <span className="text-xs font-mono text-clay shrink-0">Scale: 16/17 (~0.941)</span>
+            </div>
+
+            <div className="space-y-3">
+              {typographyTiers.map((t, idx) => (
+                <div key={idx} className="p-3 rounded-lg bg-neutral-50 dark:bg-neutral-900/60 border border-neutral-100 dark:border-neutral-800 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <div className="w-56 shrink-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold font-mono text-neutral-900 dark:text-neutral-100">{t.name}</span>
+                      <code className="text-[10px] text-clay">{t.token}</code>
+                    </div>
+                    <div className="text-[11px] text-neutral-500 font-mono mt-0.5">
+                      字号: <span className="font-semibold text-neutral-800 dark:text-neutral-200">{t.px}</span> | 行高: {t.leading}
+                    </div>
+                    <div className="text-[10px] text-neutral-400 mt-0.5">{t.role}</div>
+                  </div>
+
+                  <div className="flex-1 pl-0 md:pl-4 md:border-l border-neutral-200/60 dark:border-neutral-800">
+                    <div className="text-neutral-800 dark:text-neutral-200 tracking-tight" style={{ fontSize: t.calcPx, lineHeight: t.calcLh }}>
+                      {t.specimen}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 1.6 暗黑模式可变字体字重逆补偿 */}
+          <div className="rounded-xl border border-neutral-200/80 dark:border-neutral-800 p-5 bg-white dark:bg-[#1a1a19] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <div>
+                <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  1.6 暗黑模式视网膜光渗字重逆补偿 (Retinal Irradiation Compensation)
+                </h4>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  在深色 OLED/纯黑背景下，高亮白字会在视网膜感光细胞上产生光渗发散，视觉膨胀 10%~15%。Claude 借助可变字体轴在深色下主动减薄 30~40 刻度：
+                </p>
+              </div>
+              <span className="text-xs font-mono text-clay shrink-0">Variable Font wght Axis</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="p-3.5 rounded-lg border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 space-y-2">
+                <div className="flex items-center justify-between text-xs font-bold text-neutral-900 dark:text-neutral-100">
+                  <span>Regular (正文基准)</span>
+                  <span className="font-mono text-clay">400 → 360</span>
+                </div>
+                <div className="p-3 rounded bg-white dark:bg-[#111] border border-neutral-200/60 dark:border-neutral-800 text-sm text-neutral-800 dark:text-neutral-200 font-sans" style={{ fontVariationSettings: isDark ? "'wght' 360" : "'wght' 400" }}>
+                  用于助手回复正文与用户提问气泡。深色模式下减薄至 360，彻底消除臃肿膨胀。
+                </div>
+                <div className="text-[10px] text-neutral-400 font-mono">
+                  浅色: wght 400 | 深色: wght 360 (-40)
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-lg border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 space-y-2">
+                <div className="flex items-center justify-between text-xs font-bold text-neutral-900 dark:text-neutral-100">
+                  <span>Medium (操作控件)</span>
+                  <span className="font-mono text-clay">500 → 460</span>
+                </div>
+                <div className="p-3 rounded bg-white dark:bg-[#111] border border-neutral-200/60 dark:border-neutral-800 text-sm text-neutral-800 dark:text-neutral-200 font-sans" style={{ fontVariationSettings: isDark ? "'wght' 460" : "'wght' 500" }}>
+                  用于所有交互按钮、Tab 标签、思考链触发器与表单 Label，触觉明确。
+                </div>
+                <div className="text-[10px] text-neutral-400 font-mono">
+                  浅色: wght 500 | 深色: wght 460 (-40)
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-lg border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 space-y-2">
+                <div className="flex items-center justify-between text-xs font-bold text-neutral-900 dark:text-neutral-100">
+                  <span>Semibold (次级标题)</span>
+                  <span className="font-mono text-clay">580 → 550</span>
+                </div>
+                <div className="p-3 rounded bg-white dark:bg-[#111] border border-neutral-200/60 dark:border-neutral-800 text-sm text-neutral-800 dark:text-neutral-200 font-sans" style={{ fontVariationSettings: isDark ? "'wght' 550" : "'wght' 580" }}>
+                  用于卡片 Header、助手身份 ("Claude")、弹窗标题与 Artifact 标题。
+                </div>
+                <div className="text-[10px] text-neutral-400 font-mono">
+                  浅色: wght 580 | 深色: wght 550 (-30)
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-lg border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 space-y-2">
+                <div className="flex items-center justify-between text-xs font-bold text-neutral-900 dark:text-neutral-100">
+                  <span>Bold (强强调)</span>
+                  <span className="font-mono text-clay">600 → 660</span>
+                </div>
+                <div className="p-3 rounded bg-white dark:bg-[#111] border border-neutral-200/60 dark:border-neutral-800 text-sm text-neutral-800 dark:text-neutral-200 font-sans" style={{ fontVariationSettings: isDark ? "'wght' 660" : "'wght' 600" }}>
+                  用于大标题与强警告。在极少数需要强冲击的场景提供清晰锐利边缘。
+                </div>
+                <div className="text-[10px] text-neutral-400 font-mono">
+                  浅色: wght 600 | 深色: wght 660 (+60)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 1.7 核心内容场景排版规格映射表 */}
+          <div className="rounded-xl border border-neutral-200/80 dark:border-neutral-800 p-5 bg-white dark:bg-[#1a1a19] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <div>
+                <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  1.7 核心内容场景排版规则速查表 (Content-to-Typography Matrix)
+                </h4>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  全量解析 Claude Desktop 内部各区域、元素具体该使用什么字号、什么粗细与字体家族：
+                </p>
+              </div>
+
+              {/* Area Filter Tabs */}
+              <div className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg">
+                {[
+                  { id: "all", name: "全部" },
+                  { id: "chat", name: "对话流" },
+                  { id: "composer", name: "输入框" },
+                  { id: "artifacts", name: "代码/产物" },
+                  { id: "controls", name: "控件/弹窗" },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setSelectedTypoFilter(tab.id)}
+                    className={"px-2.5 py-1 rounded-md text-xs font-medium transition-all " + (selectedTypoFilter === tab.id ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-2xs" : "text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200")}
+                  >
+                    {tab.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-neutral-200 dark:border-neutral-800 text-[11px] font-mono text-neutral-400 uppercase">
+                    <th className="py-2.5 px-3">所属区域</th>
+                    <th className="py-2.5 px-3">界面元素</th>
+                    <th className="py-2.5 px-3">字号 (Size)</th>
+                    <th className="py-2.5 px-3">粗细 (Weight)</th>
+                    <th className="py-2.5 px-3">字体族 (Family)</th>
+                    <th className="py-2.5 px-3">排版角色与约束</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800/60">
+                  {filteredMap.map((row, idx) => (
+                    <tr key={idx} className="hover:bg-neutral-50/50 dark:hover:bg-neutral-800/30 transition-colors">
+                      <td className="py-2 px-3 font-mono text-neutral-500">
+                        {row.area === "chat" ? "对话核心流" : row.area === "composer" ? "输入终端" : row.area === "artifacts" ? "代码与产物" : "控制与浮层"}
+                      </td>
+                      <td className="py-2 px-3 font-medium text-neutral-900 dark:text-neutral-100">
+                        {row.element}
+                      </td>
+                      <td className="py-2 px-3 font-mono font-semibold text-clay">
+                        {row.size}
+                      </td>
+                      <td className="py-2 px-3 font-mono text-neutral-700 dark:text-neutral-300">
+                        {row.weight}
+                      </td>
+                      <td className="py-2 px-3 font-mono text-neutral-500">
+                        {row.font}
+                      </td>
+                      <td className="py-2 px-3 text-[11px] text-neutral-500">
+                        {row.roleDesc}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* 1.8 官方边框大小阶梯与视网膜高分屏发丝细边规范 (Border Width Scale & Retina Hairline) */}
+          <div className="rounded-xl border border-neutral-200/80 dark:border-neutral-800 p-5 bg-white dark:bg-[#1a1a19] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <div>
+                <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  1.8 官方边框大小阶梯与视网膜高分屏发丝细边规范 (Border Width & Hairline Precision)
+                </h4>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  Claude 严格避免在视网膜高分屏（Retina Display）上出现笨重的 1px 粗黑边。基于 <code>--cds-ring-hairline</code> 动态实现 0.5px 发丝细边与内阴影轮廓：
+                </p>
+              </div>
+              <span className="text-xs font-mono text-clay shrink-0">Retina Hairline: 0.5px</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* 0.5px Hairline */}
+              <div className="p-3.5 rounded-lg border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 flex flex-col justify-between space-y-2.5">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100">0.5px 发丝细边</span>
+                    <code className="text-[10px] text-clay font-mono">--cds-ring-hairline</code>
+                  </div>
+                  <div className="text-[11px] text-neutral-500 font-mono mt-0.5">@media (resolution &gt;= 2x): 0.5px</div>
+                  <p className="text-[10px] text-neutral-400 mt-1 leading-snug">
+                    用于表格内部分割线、未激活分段 Tab 缝隙、次级辅助标签与极细胶囊，彻底消除粗重感。
+                  </p>
+                </div>
+                <div className="h-12 rounded-lg bg-white dark:bg-[#111] flex items-center justify-center text-xs font-mono text-neutral-600 dark:text-neutral-300" style={{ boxShadow: "0 0 0 0.5px var(--cds-border)" }}>
+                  0.5px Hairline Box
+                </div>
+              </div>
+
+              {/* 1.0px Base Structural */}
+              <div className="p-3.5 rounded-lg border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 flex flex-col justify-between space-y-2.5">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100">1.0px 基础结构</span>
+                    <code className="text-[10px] text-clay font-mono">--cds-border</code>
+                  </div>
+                  <div className="text-[11px] text-neutral-500 font-mono mt-0.5">var(--cds-alpha-2): 10% Alpha</div>
+                  <p className="text-[10px] text-neutral-400 mt-1 leading-snug">
+                    主卡片面板、输入框常态外轮廓、浮动弹窗外边缘、顶栏底部分割线的主骨架基准。
+                  </p>
+                </div>
+                <div className="h-12 rounded-lg bg-white dark:bg-[#111] flex items-center justify-center text-xs font-mono text-neutral-600 dark:text-neutral-300" style={{ boxShadow: "0 0 0 1px var(--cds-border)" }}>
+                  1.0px Standard Box
+                </div>
+              </div>
+
+              {/* 1.5px Active Accent */}
+              <div className="p-3.5 rounded-lg border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 flex flex-col justify-between space-y-2.5">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100">1.5px 激活指示</span>
+                    <code className="text-[10px] text-clay font-mono">inset 1.5px</code>
+                  </div>
+                  <div className="text-[11px] text-neutral-500 font-mono mt-0.5">currentColor / Accent Ring</div>
+                  <p className="text-[10px] text-neutral-400 mt-1 leading-snug">
+                    分段选择器被选中的滑块微轮廓、单选/多选激活状态外环，提供坚实清晰的触觉聚焦。
+                  </p>
+                </div>
+                <div className="h-12 rounded-lg bg-white dark:bg-[#111] flex items-center justify-center text-xs font-mono text-clay" style={{ boxShadow: "inset 0 0 0 1.5px currentColor" }}>
+                  1.5px Active Ring
+                </div>
+              </div>
+
+              {/* 2.0px Focus & Drop Target */}
+              <div className="p-3.5 rounded-lg border border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 flex flex-col justify-between space-y-2.5">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-neutral-900 dark:text-neutral-100">2.0px 焦点与吸附</span>
+                    <code className="text-[10px] text-clay font-mono">--cds-shadow-drop-ring</code>
+                  </div>
+                  <div className="text-[11px] text-neutral-500 font-mono mt-0.5">inset 0 0 0 2px var(--cds-clay)</div>
+                  <p className="text-[10px] text-neutral-400 mt-1 leading-snug">
+                    拖拽文件悬停至输入框时的吸附高亮环，以及键盘 Tab 导航聚焦高亮圈。
+                  </p>
+                </div>
+                <div className="h-12 rounded-lg bg-white dark:bg-[#111] flex items-center justify-center text-xs font-mono text-clay" style={{ boxShadow: "inset 0 0 0 2px var(--cds-clay)" }}>
+                  2.0px Drop Target Ring
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 1.9 生产级四层环境光扩散阴影阶梯 (4-Tier Ambient & Elevation Shadow System) */}
+          <div className="rounded-xl border border-neutral-200/80 dark:border-neutral-800 p-5 bg-white dark:bg-[#1a1a19] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <div>
+                <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  1.9 生产级四层环境光扩散阴影阶梯 (4-Tier Ambient & Elevation Shadow System)
+                </h4>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  彻底对齐 Claude 官方阴影：拒绝单一粗暴的纯黑模糊，采用<b>【近距微遮蔽 (Ambient Occlusion)】+【远距深层漫反射 (Elevation Diffusion)】</b>双层复合公式：
+                </p>
+              </div>
+              <span className="text-xs font-mono text-clay shrink-0">Multi-Layer Tinted Shadows</span>
+            </div>
+
+            {/* Shadow Tabs */}
+            <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-lg bg-neutral-100 dark:bg-neutral-800/80 max-w-fit">
+              {[
+                { id: "sm", name: "Shadow SM (微立体)", tag: "--cds-shadow-sm" },
+                { id: "md", name: "Shadow MD (悬浮菜单)", tag: "--cds-shadow-md" },
+                { id: "lg", name: "Shadow LG (模态弹窗)", tag: "--cds-shadow-lg" },
+                { id: "popover", name: "Dual-Ring Popover (双环气泡)", tag: "--cds-shadow-popover" },
+                { id: "composer", name: "Composer (输入终端)", tag: "--cds-shadow-composer" },
+                { id: "focus", name: "Focus Glow (三层光晕环)", tag: "--cds-focus-shadow" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveShadowTab(tab.id)}
+                  className={"px-3 py-1.5 rounded-md text-xs font-medium transition-all " + (activeShadowTab === tab.id ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-2xs font-semibold" : "text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200")}
+                >
+                  {tab.name}
+                </button>
+              ))}
+            </div>
+
+            {/* Live Shadow Specimen Area */}
+            <div className="p-8 rounded-xl bg-neutral-100/60 dark:bg-[#0d0d0c] border border-neutral-200/60 dark:border-neutral-800/80 flex flex-col md:flex-row items-center justify-between gap-6">
+              {/* Specimen Card */}
+              <div className="w-full md:w-80 p-6 rounded-2xl bg-white dark:bg-[#1a1a19] flex flex-col items-center justify-center text-center space-y-2 transition-all duration-300"
+                style={{
+                  boxShadow: activeShadowTab === "sm"
+                    ? "var(--cds-shadow-sm)"
+                    : activeShadowTab === "md"
+                    ? "var(--cds-shadow-md)"
+                    : activeShadowTab === "lg"
+                    ? "var(--cds-shadow-lg)"
+                    : activeShadowTab === "popover"
+                    ? "var(--cds-shadow-popover)"
+                    : activeShadowTab === "composer"
+                    ? "var(--cds-shadow-composer-focus)"
+                    : "var(--cds-focus-shadow)",
+                  borderRadius: activeShadowTab === "composer" ? "20px" : "16px"
+                }}
+              >
+                <div className="size-9 rounded-full bg-clay/10 text-clay flex items-center justify-center font-bold text-xs">
+                  CDS
+                </div>
+                <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  {activeShadowTab === "sm" && "Shadow SM • 基础微立体卡片"}
+                  {activeShadowTab === "md" && "Shadow MD • 悬浮展开状态卡片"}
+                  {activeShadowTab === "lg" && "Shadow LG • 全局模态沉浸层"}
+                  {activeShadowTab === "popover" && "Dual-Ring Popover • 双环浮动气泡"}
+                  {activeShadowTab === "composer" && "Composer Focused • 输入端聚焦呼吸态"}
+                  {activeShadowTab === "focus" && "Focus Ring • 陶土可访问性外环"}
+                </div>
+                <p className="text-xs text-neutral-500 leading-snug">
+                  {activeShadowTab === "sm" && "浅色仅 5% 灰度双层漫射，深色为 35% 紧贴微遮蔽，消除纯黑压抑感。"}
+                  {activeShadowTab === "md" && "鼠标悬浮升高或右键展开菜单时的轻量悬空层级，自然脱离背景。"}
+                  {activeShadowTab === "lg" && "对话框与抽屉独享的大弥散度阴影，向下深潜 28px~36px。"}
+                  {activeShadowTab === "popover" && "暗黑模式外环 0px + 内环 1px 倒角反光，浅色模式 1px 外轮廓，绝不糊边。"}
+                  {activeShadowTab === "composer" && "Claude 最经典的 20px 大圆角输入框，悬浮与聚焦时向外扩散 24px 双环微投影。"}
+                  {activeShadowTab === "focus" && "内嵌 1px 背景垫片隔离环 + 1.5px 陶土高亮环 + 6px 柔和弥散光晕。"}
+                </p>
+              </div>
+
+              {/* Code Snippet Box */}
+              <div className="flex-1 w-full p-4 rounded-xl bg-[#141413] text-neutral-300 font-mono text-xs overflow-x-auto leading-relaxed border border-neutral-800">
+                <div className="text-[10px] text-neutral-500 uppercase mb-2">CSS 源码定义公式 (Extracted Token)</div>
+                {activeShadowTab === "sm" && (
+                  <pre className="text-neutral-300">
+{`/* 浅色模式: 5% 双层漫反射 */
+box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05), 
+            0 2px 8px 0 rgba(0, 0, 0, 0.08);
+
+/* 深色模式: 40% 紧贴微遮蔽 */
+box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.40), 
+            0 2px 8px 0 rgba(0, 0, 0, 0.40);`}
+                  </pre>
+                )}
+                {activeShadowTab === "md" && (
+                  <pre className="text-neutral-300">
+{`/* 浅色模式: 悬浮菜单/卡片 Hover */
+box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 
+            0 6px 16px 0 rgba(0, 0, 0, 0.08);
+
+/* 深色模式 */
+box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.40), 
+            0 6px 16px 0 rgba(0, 0, 0, 0.40);`}
+                  </pre>
+                )}
+                {activeShadowTab === "lg" && (
+                  <pre className="text-neutral-300">
+{`/* 浅色模式: 模态遮罩/全屏抽屉 */
+box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.06), 
+            0 12px 28px -2px rgba(0, 0, 0, 0.08);
+
+/* 深色模式 */
+box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.50), 
+            0 16px 36px -2px rgba(0, 0, 0, 0.40);`}
+                  </pre>
+                )}
+                {activeShadowTab === "popover" && (
+                  <pre className="text-neutral-300">
+{`/* 浅色模式: 1px 外框 + 弥散 */
+box-shadow: inset 0 0 0 0px var(--cds-border),
+            0 0 0 1px var(--cds-border),
+            0 8px 24px rgba(0, 0, 0, 0.12), 
+            0 2px 6px rgba(0, 0, 0, 0.08);
+
+/* 深色模式: 0px 外框 + 1px 内部边缘倒角高光! */
+box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+            0 0 0 0px transparent,
+            0 8px 28px rgba(0, 0, 0, 0.65), 
+            0 2px 8px rgba(0, 0, 0, 0.45);`}
+                  </pre>
+                )}
+                {activeShadowTab === "composer" && (
+                  <pre className="text-neutral-300">
+{`/* 常态 (Resting) */
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.035), inset 0 0 0 1px var(--cds-border);
+
+/* 悬停 (Hover) */
+box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), inset 0 0 0 1px var(--cds-border-strong);
+
+/* 聚焦态 (Focus-Within) */
+box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 
+            inset 0 0 0 1px var(--cds-border-strong), 
+            0 0 0 1px var(--cds-border-strong);`}
+                  </pre>
+                )}
+                {activeShadowTab === "focus" && (
+                  <pre className="text-neutral-300">
+{`/* 全局交互焦点环 (Triple-Layer Ring) */
+box-shadow: inset 0 0 0 1px var(--cds-surface-1), /* 1px 隔离垫片 */
+            0 0 0 1.5px var(--cds-clay),          /* 1.5px 陶土高亮 */
+            0 0 6px 1px rgba(217, 119, 87, 0.25); /* 柔和漫反射光晕 */`}
+                  </pre>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 1.10 全交互 Hover 态与微反馈物理规范 (Interactive Hover States & Micro-Feedback) */}
+          <div className="rounded-xl border border-neutral-200/80 dark:border-neutral-800 p-5 bg-white dark:bg-[#1a1a19] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <div>
+                <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  1.10 全交互 Hover 态与微反馈物理试炼场 (Interactive Micro-Feedback Playground)
+                </h4>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  将鼠标悬停、点击按压（Active）、Tab 键聚焦于下方控件，直观感受与 Claude 原生 100% 对齐的物理响应：
+                </p>
+              </div>
+              <div className="text-xs font-mono text-clay px-2 py-0.5 rounded bg-clay/10 shrink-0">
+                状态检测: {playgroundState}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
+              {/* 1. Ghost Button Feedback */}
+              <div
+                onMouseEnter={() => setPlaygroundState("Ghost Button: Hover (5% Alpha)")}
+                onMouseDown={() => setPlaygroundState("Ghost Button: Active Press (scale 0.98)")}
+                onMouseLeave={() => setPlaygroundState("hover over any element")}
+                className="p-4 rounded-xl border border-neutral-100 dark:border-neutral-800/60 bg-neutral-50/50 dark:bg-neutral-900/40 flex flex-col justify-between space-y-3"
+              >
+                <div>
+                  <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">1. 幽灵按钮悬浮与按压</span>
+                  <p className="text-[11px] text-neutral-400 mt-0.5">常态透明，悬浮渐变 5% 灰度底衬，点击轻微回弹缩放。</p>
+                </div>
+                <button className="h-9 px-3 rounded-lg text-neutral-600 dark:text-neutral-300 text-xs font-medium cds-hover-ghost flex items-center justify-center gap-1.5 w-full">
+                  <Icon name="spark" size="xs" className="text-clay" />
+                  <span>Ghost Button</span>
+                </button>
+              </div>
+
+              {/* 2. Card Elevation Lift */}
+              <div
+                onMouseEnter={() => setPlaygroundState("Card: Hover Lift (-1.5px & MD Shadow)")}
+                onMouseDown={() => setPlaygroundState("Card: Active (translateY 0)")}
+                onMouseLeave={() => setPlaygroundState("hover over any element")}
+                className="p-4 rounded-xl border border-neutral-100 dark:border-neutral-800/60 bg-neutral-50/50 dark:bg-neutral-900/40 flex flex-col justify-between space-y-3"
+              >
+                <div>
+                  <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">2. 卡片物理抬升 (Y-Lift)</span>
+                  <p className="text-[11px] text-neutral-400 mt-0.5">悬浮抬升 1.5px，阴影由 Panel-SM 跃迁至 MD，边框对比度强化。</p>
+                </div>
+                <div className="p-3 rounded-xl bg-white dark:bg-[#151515] cds-card-interactive cursor-pointer flex items-center gap-2.5">
+                  <div className="size-7 rounded-lg bg-clay/10 text-clay flex items-center justify-center shrink-0">
+                    <Icon name="fileCode" size="xs" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-medium text-neutral-900 dark:text-neutral-100 truncate">ArtifactCard.jsx</div>
+                    <div className="text-[10px] text-neutral-400 font-mono">Hover to lift</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Popover Menu Row Highlight */}
+              <div
+                onMouseEnter={() => setPlaygroundState("Menu Row: Hover Pill Highlight")}
+                onMouseDown={() => setPlaygroundState("Menu Row: Active Selected")}
+                onMouseLeave={() => setPlaygroundState("hover over any element")}
+                className="p-4 rounded-xl border border-neutral-100 dark:border-neutral-800/60 bg-neutral-50/50 dark:bg-neutral-900/40 flex flex-col justify-between space-y-3"
+              >
+                <div>
+                  <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">3. 浮动菜单行高亮</span>
+                  <p className="text-[11px] text-neutral-400 mt-0.5">紧凑 4px 圆角高亮胶囊，图标与文字联动变亮。</p>
+                </div>
+                <div className="p-1 rounded-xl bg-white dark:bg-[#222220] cds-shadow-popover space-y-0.5">
+                  <div className="px-2.5 py-1.5 rounded-md text-xs text-neutral-700 dark:text-neutral-300 cds-hover-ghost cursor-pointer flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Icon name="copy" size="xs" className="text-neutral-400" />
+                      <span>Copy Code</span>
+                    </div>
+                    <kbd className="text-[10px] font-mono text-neutral-400">⌘C</kbd>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. Focus Glow Input */}
+              <div
+                onMouseEnter={() => setPlaygroundState("Input: Hover Border Darken")}
+                onMouseLeave={() => setPlaygroundState("hover over any element")}
+                className="p-4 rounded-xl border border-neutral-100 dark:border-neutral-800/60 bg-neutral-50/50 dark:bg-neutral-900/40 flex flex-col justify-between space-y-3"
+              >
+                <div>
+                  <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">4. 焦点呼吸光晕 (Focus)</span>
+                  <p className="text-[11px] text-neutral-400 mt-0.5">点击激活时外展 3 层陶土环境光，彻底取代粗鲁的默认 outline。</p>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Click to focus..."
+                  onFocus={() => setPlaygroundState("Input: Focused with Triple-Layer Glow")}
+                  onBlur={() => setPlaygroundState("hover over any element")}
+                  className="w-full h-9 px-3 rounded-lg bg-white dark:bg-[#111] text-xs text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 transition-all duration-200 outline-none border border-neutral-300/80 dark:border-neutral-700 focus:shadow-focus-glow focus:border-clay"
+                  style={{
+                    boxShadow: "var(--cds-shadow-sm)"
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================================================
+    // 2. SECTION: App Shell & macOS Desktop Structure
+    // ==========================================================================
+    function AppShellSection() {
+      const [activeNav, setActiveNav] = useState("chat");
+
+      return (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* 2.1 macOS 原生标题栏模拟 */}
+          <ComponentShowcase
+            title="macOS 原生窗体标题栏"
+            tag=".df-titlebar"
+            code={`<div className="df-titlebar h-[46px] border-b flex items-center px-3">
+  {/* macOS Traffic Lights 74px Spacer */}
+  <div className="w-[74px] flex items-center gap-2 pl-1">
+    <span className="size-3 rounded-full bg-[#ff5f57]" />
+    <span className="size-3 rounded-full bg-[#febc2e]" />
+    <span className="size-3 rounded-full bg-[#28c840]" />
+  </div>
+  <div className="flex-1 text-center font-medium text-xs">Claude 3.7 Sonnet</div>
+</div>`}
+            description="真实的桌面端标题栏，左侧预留 74px 红绿灯交通灯垫片，中央展示当前模型或会话名，右侧为窗口动作工具。"
+          >
+            <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-[#f5f5f3] dark:bg-[#0b0b0a] overflow-hidden shadow-sm">
+              <div className="h-[46px] px-3 flex items-center justify-between border-b border-neutral-200/80 dark:border-neutral-800">
+                {/* Traffic lights */}
+                <div className="w-[74px] flex items-center gap-2">
+                  <span className="size-3 rounded-full bg-[#ff5f57] border border-[#e0443e]" />
+                  <span className="size-3 rounded-full bg-[#febc2e] border border-[#d89e24]" />
+                  <span className="size-3 rounded-full bg-[#28c840] border border-[#1aab29]" />
+                </div>
+
+                {/* Center Title Pill */}
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-neutral-800/80 shadow-xs border border-neutral-200/60 dark:border-neutral-700/60 text-xs font-medium text-neutral-800 dark:text-neutral-200">
+                  <Icon name="spark" size="xs" className="text-clay" />
+                  <span>Claude 3.7 Sonnet</span>
+                  <span className="size-1.5 rounded-full bg-emerald-500 ml-0.5" />
+                </div>
+
+                {/* Right controls */}
+                <div className="flex items-center gap-1">
+                  <button className="size-7 rounded-md flex items-center justify-center text-neutral-500 hover:bg-neutral-200/60 dark:hover:bg-neutral-800">
+                    <Icon name="search" size="xs" />
+                  </button>
+                  <button className="size-7 rounded-md flex items-center justify-center text-neutral-500 hover:bg-neutral-200/60 dark:hover:bg-neutral-800">
+                    <Icon name="settings" size="xs" />
+                  </button>
+                </div>
+              </div>
+              <div className="p-4 text-xs text-neutral-400 font-mono text-center">
+                高度 46px (--cds-h-titlebar) | 交通灯左内边距 74px (--df-traffic-light-spacer)
+              </div>
+            </div>
+          </ComponentShowcase>
+
+          {/* 2.2 导航 Hub Rail 与应用切换器 */}
+          <ComponentShowcase
+            title="主导航 Hub Rail 切换器"
+            tag=".df-hub-rail"
+            code={`<div className="df-hub-rail flex gap-1 p-1 bg-neutral-200/80 rounded-full">
+  <button className="px-3 py-1 rounded-full text-xs">Chat</button>
+  <button className="px-3 py-1 rounded-full text-xs">Artifacts</button>
+</div>`}
+            description="侧边栏顶部的全圆角 999px 滑动药丸胶囊，用于在聊天、产物、项目与历史记录间切换。"
+          >
+            <div className="space-y-4">
+              <div className="inline-flex p-1 rounded-full bg-neutral-200/70 dark:bg-neutral-800/80 text-xs font-medium select-none shadow-inner">
+                {[
+                  { id: "chat", name: "Chats", icon: "chat" },
+                  { id: "artifacts", name: "Artifacts", icon: "fileCode" },
+                  { id: "projects", name: "Projects", icon: "layers" },
+                ].map((tab) => {
+                  const active = activeNav === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveNav(tab.id)}
+                      className={`px-3.5 py-1.5 rounded-full flex items-center gap-1.5 transition-all duration-150 ${
+                        active
+                          ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-xs font-semibold"
+                          : "text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-200"
+                      }`}
+                    >
+                      <Icon name={tab.icon} size="xs" className={active ? "text-clay" : ""} />
+                      <span>{tab.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* 搜索框 */}
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-400">
+                  <Icon name="search" size="xs" />
+                </div>
+                <input
+                  type="text"
+                  readOnly
+                  value=""
+                  placeholder="Search chats, projects, code..."
+                  className="w-full h-8 pl-8 pr-12 rounded-lg bg-neutral-100 dark:bg-neutral-800/60 border border-neutral-200/60 dark:border-neutral-700/60 text-xs placeholder-neutral-400 focus:outline-none"
+                />
+                <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+                  <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-white dark:bg-neutral-700 rounded border border-neutral-200 dark:border-neutral-600 text-neutral-400 shadow-2xs">
+                    ⌘K
+                  </kbd>
+                </div>
+              </div>
+            </div>
+          </ComponentShowcase>
+        </div>
+      );
+    }
+
+    // ==========================================================================
+    // 3. SECTION: Chat Core & Composer Terminal (With Full Multi-Turn Window & Interactive Uploads)
+    // ==========================================================================
+    function ChatCoreSection() {
+      // 聊天会话状态 (多轮对话)
+      const [messages, setMessages] = useState([
+        {
+          id: 1,
+          role: "user",
+          time: "10:24 AM",
+          text: "帮我实现一个支持暗黑模式光学字重补偿的前端样式方案，包含可变字体和行内图标基线对齐。",
+        },
+        {
+          id: 2,
+          role: "assistant",
+          time: "10:24 AM",
+          thinkingTime: "4.2s",
+          thinkingSteps: [
+            "正在分析字体光渗物理发散 (Retinal Irradiation Effect)...",
+            "提取可变字体轴配置: font-variation-settings: 'wght' 465",
+            "设定行内图标光学负偏置: vertical-align: -0.125em",
+            "验证 iOS WebKit 16px 防缩放底线",
+            "生成生产级 Tailwind + CSS 封装方案",
+          ],
+          text: "在深色背景下，高对比度白字因视网膜光渗效应在视觉上会比实际粗约 10%~15%。Claude 的解决方案是借助 Variable Font 轴，在深色模式下主动将 Medium 字重从 500 减薄至 465 刻度：",
+          code: `/* 暗色模式光学字重逆补偿 */\n.dark .font-medium {\n  font-variation-settings: "wght" 465;\n}\n.align-neg-125 {\n  vertical-align: -0.125em; /* 行内图标光学基线校准 */\n}`,
+          artifact: {
+            title: "IrradiationCompensation.css",
+            version: "v1 (CSS)",
+            desc: "Variable Font & Optical Baseline Utilities",
+          },
+        },
+        {
+          id: 3,
+          role: "user",
+          time: "10:26 AM",
+          text: "太棒了！这是我们系统的设计配置文件，请根据这个文件帮我增加容器查询防挤压规则。",
+          attachment: {
+            name: "design-tokens.json",
+            size: "4.2 KB",
+            type: "JSON",
+            icon: "fileCode",
+          },
+        },
+        {
+          id: 4,
+          role: "assistant",
+          time: "10:26 AM",
+          thinkingTime: "2.1s",
+          thinkingSteps: [
+            "解析上传的 design-tokens.json 断点定义...",
+            "识别固定宽度侧边栏与普通媒体查询的挤压冲突",
+            "注入 @container stage-container (max-width: 520px) 降级矩阵",
+          ],
+          text: "已根据您的配置完成解析。在 288px 侧边栏或窄抽屉中，普通媒体查询会误判宽屏而强行多列排版，必须在根容器声明 container-type: inline-size 并配合断点降级：",
+          chips: ["如何兼容 iOS 移动端抽屉?", "查看完整组件代码", "运行物理弹簧跑道"],
+        },
+      ]);
+
+      // 输入框与附件状态
+      const [inputText, setInputText] = useState("");
+      const [composerAttachments, setComposerAttachments] = useState([]);
+      const [isThinkingEnabled, setIsThinkingEnabled] = useState(true);
+      const [selectedModel, setSelectedModel] = useState("Claude 3.7 Sonnet");
+      const [isModelDropdownOpen, setIsModelDropdownOpen] = useState(false);
+      const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
+      const [expandedThinkingIds, setExpandedThinkingIds] = useState({ 2: false, 4: false });
+
+      // 独立思考组件演示状态 (针对图片 0 的修复)
+      const [isolatedThinkingActive, setIsolatedThinkingActive] = useState(false);
+      const [isolatedThinkingOpen, setIsolatedThinkingOpen] = useState(true);
+
+      // 独立上传演示组件状态 (针对图片 1 的修复)
+      const [demoFiles, setDemoFiles] = useState([
+        { id: 1, name: "theme-tokens.css", size: "14.2 KB", type: "CSS", icon: "fileCode", uploading: false },
+        { id: 2, name: "architecture-spec.pdf", size: "184 KB", type: "PDF", icon: "fileText", uploading: false },
+      ]);
+      const fileInputRef = useRef(null);
+      const chatEndRef = useRef(null);
+
+      // 发送新消息
+      const handleSendMessage = () => {
+        if (!inputText.trim() && composerAttachments.length === 0) return;
+
+        const newMsgId = messages.length + 1;
+        const userMsg = {
+          id: newMsgId,
+          role: "user",
+          time: "Just now",
+          text: inputText.trim() || "（已发送附件）",
+          attachment: composerAttachments[0] || null,
+        };
+
+        const nextMessages = [...messages, userMsg];
+        setMessages(nextMessages);
+        setInputText("");
+        setComposerAttachments([]);
+
+        // 模拟 Assistant 回复
+        setTimeout(() => {
+          const assistantReply = {
+            id: newMsgId + 1,
+            role: "assistant",
+            time: "Just now",
+            thinkingTime: "1.5s",
+            thinkingSteps: [
+              "解析用户刚刚发送的提示与附件...",
+              "提取 CDS 设计令牌并完成布局重排",
+              "生成实时响应流...",
+            ],
+            text: "收到！已成功捕获并整合您的输入。在实际 Claude 桌面端中，此消息将触发 Grapheme Reveal 字符模糊消解流式动画。",
+          };
+          setMessages([...nextMessages, assistantReply]);
+        }, 1200);
+      };
+
+      // 模拟添加附件到输入框
+      const attachFileToComposer = (fileObj) => {
+        setComposerAttachments([...composerAttachments, fileObj]);
+        setIsAddMenuOpen(false);
+      };
+
+      // 真实本地文件选择上传
+      const handleRealUpload = (e) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+        Array.from(files).forEach((file, idx) => {
+          const ext = file.name.split(".").pop().toUpperCase();
+          const newFile = {
+            id: Date.now() + idx,
+            name: file.name,
+            size: `${(file.size / 1024).toFixed(1)} KB`,
+            type: ext || "FILE",
+            icon: ext.includes("TS") || ext.includes("JS") || ext.includes("CSS") ? "fileCode" : "fileText",
+            uploading: true,
+          };
+          setDemoFiles((prev) => [...prev, newFile]);
+          setTimeout(() => {
+            setDemoFiles((prev) => prev.map((f) => (f.id === newFile.id ? { ...f, uploading: false } : f)));
+          }, 600);
+        });
+      };
+
+      const removeDemoFile = (id) => {
+        setDemoFiles(demoFiles.filter((f) => f.id !== id));
+      };
+
+      return (
+        <div className="space-y-8">
+          {/* 3.1 真实高保真多轮会话视窗 (解决用户提出的对话界面弄高一点、多轮对话展示的需求) */}
+          <div className="rounded-xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1a1a19] shadow-md overflow-hidden flex flex-col">
+            {/* 顶栏: 会话窗体头部 */}
+            <div className="px-5 py-3.5 border-b border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/70 dark:bg-neutral-900/60 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="size-8 rounded-lg bg-clay text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Icon name="spark" size="xs" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                      Claude High-Fidelity Multi-Turn Session
+                    </h3>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-medium flex items-center gap-1">
+                      <span className="size-1.5 rounded-full bg-emerald-500" />
+                      Live Interactive
+                    </span>
+                  </div>
+                  <div className="text-xs text-neutral-400">
+                    完整多轮对话展示 • 思考折叠器 • 代码块 • Artifacts 卡片 • 输入终端
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setMessages(messages.slice(0, 2))}
+                  className="px-2.5 py-1 rounded-md text-xs font-mono text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 border border-neutral-200 dark:border-neutral-700"
+                >
+                  重置为初始 2 轮
+                </button>
+              </div>
+            </div>
+
+            {/* 核心多轮消息滚动视口 (高保真 560px 高度) */}
+            <div className="p-4 sm:p-6 space-y-6 overflow-y-auto max-h-[580px] bg-[#fcfcfb] dark:bg-[#151515]">
+              {messages.map((m) => {
+                const isUser = m.role === "user";
+
+                if (isUser) {
+                  return (
+                    <div key={m.id} className="flex flex-col items-end space-y-2">
+                      <div className="text-[11px] font-mono text-neutral-400">{m.time}</div>
+
+                      {/* 如果有附件卡片 */}
+                      {m.attachment && (
+                        <div className="w-48 p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 shadow-xs flex items-center gap-2.5">
+                          <div className="size-8 rounded-md bg-clay/10 text-clay flex items-center justify-center shrink-0">
+                            <Icon name={m.attachment.icon || "fileCode"} size="xs" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-xs font-medium text-neutral-900 dark:text-neutral-100 truncate">{m.attachment.name}</div>
+                            <div className="text-[10px] text-neutral-400 font-mono">{m.attachment.size}</div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 用户提问气泡 (严格 18px 圆角规范) */}
+                      <div
+                        className="rounded-[18px] px-4 py-2.5 text-[14px] leading-relaxed bg-[#f0f4f8] dark:bg-white/10 text-neutral-900 dark:text-neutral-100 max-w-[85%] sm:max-w-[75%] shadow-xs"
+                        style={{ animation: "message-fade-up 0.4s cubic-bezier(.34, 1.3, .64, 1)" }}
+                      >
+                        {m.text}
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Assistant 消息分支
+                const isThinkingOpen = expandedThinkingIds[m.id] ?? false;
+
+                return (
+                  <div key={m.id} className="space-y-3 max-w-2xl" style={{ animation: "message-fade-up 0.45s cubic-bezier(.34, 1.3, .64, 1)" }}>
+                    {/* Header */}
+                    <div className="flex items-center gap-2 text-xs text-neutral-400 font-medium">
+                      <Icon name="spark" size="xs" className="text-clay" />
+                      <span className="font-semibold text-neutral-800 dark:text-neutral-200">Claude</span>
+                      <span className="font-mono text-[10px] px-1.5 py-0.2 rounded bg-neutral-200/50 dark:bg-neutral-800">Sonnet 3.7</span>
+                      <span>•</span>
+                      <span className="font-mono text-[11px]">{m.time}</span>
+                    </div>
+
+                    {/* 思考折叠过程 (Thinking Disclosure - 遵循无闭合框极简原则) */}
+                    {m.thinkingSteps && (
+                      <div className="rounded-lg transition-colors">
+                        <div
+                          onClick={() => setExpandedThinkingIds({ ...expandedThinkingIds, [m.id]: !isThinkingOpen })}
+                          className="inline-flex items-center gap-2 py-1 px-2 -ml-2 rounded-md cursor-pointer select-none text-xs text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                        >
+                          <span className="size-1.5 rounded-full bg-clay" />
+                          <span className="font-medium">Thought for {m.thinkingTime || "3.2s"}</span>
+                          <Icon name="chevronDown" size="xs" className={`text-neutral-400 transition-transform duration-200 ${isThinkingOpen ? "rotate-180" : ""}`} />
+                        </div>
+
+                        {/* 展开的思考过程日志 (采用极细左引导线代替闭合盒) */}
+                        <div
+                          className="grid transition-[grid-template-rows] duration-200 ease-[cubic-bezier(.19,1,.22,1)]"
+                          style={{ gridTemplateRows: isThinkingOpen ? "1fr" : "0fr" }}
+                        >
+                          <div className="min-h-0 overflow-hidden pl-3.5 ml-1 mt-1 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400 font-mono border-l-2 border-clay/40 dark:border-clay/30 space-y-1">
+                            {m.thinkingSteps.map((step, idx) => (
+                              <div key={idx} className={step.includes("正在") || step.includes("解析") ? "text-clay font-medium" : ""}>
+                                &gt; {step}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 回答正文 (完全无框，自然排版) */}
+                    <div className="text-[15px] leading-relaxed text-neutral-800 dark:text-neutral-200">
+                      {m.text}
+                    </div>
+
+                    {/* 代码块 */}
+                    {m.code && (
+                      <div className="rounded-xl overflow-hidden border border-neutral-800 bg-[#0d0d0c] text-neutral-200 font-mono text-xs shadow-sm">
+                        <div className="flex items-center justify-between px-3.5 py-2 bg-neutral-950/80 border-b border-neutral-800 text-[11px] text-neutral-400">
+                          <div className="flex items-center gap-1.5">
+                            <Icon name="fileCode" size="xs" />
+                            <span>css</span>
+                          </div>
+                          <span>2.5s Auto-Decay</span>
+                        </div>
+                        <pre className="p-3.5 overflow-x-auto leading-relaxed">{m.code}</pre>
+                      </div>
+                    )}
+
+                    {/* Artifact 产物卡片 */}
+                    {m.artifact && (
+                      <div className="p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-800/80 shadow-xs flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="size-9 rounded-lg bg-clay/10 text-clay flex items-center justify-center shrink-0">
+                            <Icon name="fileCode" size="sm" />
+                          </div>
+                          <div>
+                            <div className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">{m.artifact.title}</div>
+                            <div className="text-[11px] text-neutral-400 font-mono">{m.artifact.version} • {m.artifact.desc}</div>
+                          </div>
+                        </div>
+                        <button className="h-7 px-3 rounded-lg bg-clay text-white text-xs font-medium hover:bg-clay-hover shadow-xs flex items-center gap-1">
+                          <Icon name="play" size="xs" />
+                          <span>Open Artifact</span>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* 建议提示词药丸 Chips */}
+                    {m.chips && (
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {m.chips.map((chip, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setInputText(chip)}
+                            className="px-3 py-1 rounded-full border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/60 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-xs text-neutral-700 dark:text-neutral-300 transition-colors"
+                          >
+                            {chip}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* 消息动作操作栏 */}
+                    <div className="flex items-center gap-3 pt-1 text-neutral-400">
+                      <button className="hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="复制代码">
+                        <Icon name="copy" size="xs" />
+                      </button>
+                      <button className="hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="赞">
+                        <Icon name="thumbsUp" size="xs" />
+                      </button>
+                      <button className="hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors" title="踩">
+                        <Icon name="thumbsDown" size="xs" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+              <div ref={chatEndRef} />
+            </div>
+
+            {/* 底部吸附式核心智能输入框终端 (具有完全交互) */}
+            <div className="p-4 border-t border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-[#1a1a19]">
+              <div className="w-full max-w-2xl mx-auto">
+                <div className="relative flex flex-col w-full rounded-[20px] bg-white dark:bg-[#1a1a19] p-[0.875rem] gap-y-2 cds-composer-shadow">
+                  {/* 如果输入框有待发送附件 */}
+                  {composerAttachments.length > 0 && (
+                    <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                      {composerAttachments.map((f, i) => (
+                        <div key={i} className="px-2.5 py-1 rounded-md bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-xs flex items-center gap-2 shadow-2xs">
+                          <Icon name="fileCode" size="xs" className="text-clay" />
+                          <span className="font-medium truncate max-w-[120px]">{f.name}</span>
+                          <span
+                            onClick={() => setComposerAttachments(composerAttachments.filter((_, idx) => idx !== i))}
+                            className="text-neutral-400 hover:text-red-500 cursor-pointer ml-1"
+                          >
+                            ×
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* 自适应伸缩文本域 */}
+                  <textarea
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
+                    placeholder="Reply to Claude... (按 Enter 发送多轮消息)"
+                    rows={2}
+                    className="w-full bg-transparent border-none outline-none resize-none text-[15px] leading-[1.4] text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 pl-1 focus:ring-0"
+                  />
+
+                  {/* 底部工具条 */}
+                  <div className="flex items-center justify-between pt-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {/* + Add content 菜单 */}
+                      <div className="relative">
+                        <button
+                          onClick={() => setIsAddMenuOpen(!isAddMenuOpen)}
+                          className="h-8 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300 cds-hover-ghost"
+                        >
+                          <Icon name="plus" size="xs" />
+                          <span>Add content</span>
+                        </button>
+
+                        {/* 弹出菜单 (真双环 Popover 阴影) */}
+                        {isAddMenuOpen && (
+                          <div className="absolute bottom-full left-0 mb-2 w-48 rounded-xl bg-white dark:bg-[#222220] cds-shadow-popover p-1.5 z-30 space-y-0.5 animate-fade">
+                            <button
+                              onClick={() => {
+                                attachFileToComposer({ name: "schema.ts", size: "3.4 KB", type: "CODE", icon: "fileCode" });
+                              }}
+                              className="w-full text-left px-2.5 py-1.5 rounded-lg cds-hover-ghost text-xs flex items-center gap-2 text-neutral-800 dark:text-neutral-200"
+                            >
+                              <Icon name="fileCode" size="xs" className="text-clay" />
+                              <span>Attach Code (schema.ts)</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                attachFileToComposer({ name: "doc.pdf", size: "128 KB", type: "PDF", icon: "fileText" });
+                              }}
+                              className="w-full text-left px-2.5 py-1.5 rounded-lg cds-hover-ghost text-xs flex items-center gap-2 text-neutral-800 dark:text-neutral-200"
+                            >
+                              <Icon name="fileText" size="xs" className="text-blue-500" />
+                              <span>Attach PDF (doc.pdf)</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* 模型选择胶囊 */}
+                      <div className="relative">
+                        <button
+                          onClick={() => setIsModelDropdownOpen(!isModelDropdownOpen)}
+                          className="h-8 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300 cds-hover-ghost border border-neutral-200/60 dark:border-neutral-700/60"
+                        >
+                          <Icon name="spark" size="xs" className="text-clay" />
+                          <span>{selectedModel}</span>
+                          <Icon name="chevronDown" size="xs" className="text-neutral-400" />
+                        </button>
+
+                        {isModelDropdownOpen && (
+                          <div className="absolute bottom-full left-0 mb-2 w-56 rounded-xl bg-white dark:bg-[#222220] cds-shadow-popover p-1.5 z-30 space-y-1 animate-fade">
+                            {["Claude 3.7 Sonnet", "Claude 3.5 Haiku", "Claude 3 Opus"].map((name) => (
+                              <button
+                                key={name}
+                                onClick={() => { setSelectedModel(name); setIsModelDropdownOpen(false); }}
+                                className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between cds-hover-ghost ${
+                                  selectedModel === name ? "bg-clay/10 text-neutral-900 dark:text-white font-semibold" : "text-neutral-600 dark:text-neutral-300"
+                                }`}
+                              >
+                                <span>{name}</span>
+                                {selectedModel === name && <Icon name="check" size="xs" className="text-clay" />}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Thinking 开关 */}
+                      <button
+                        onClick={() => setIsThinkingEnabled(!isThinkingEnabled)}
+                        className={`h-8 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-medium transition-all ${
+                          isThinkingEnabled ? "bg-clay/15 text-clay border border-clay/30" : "text-neutral-400 cds-hover-ghost"
+                        }`}
+                      >
+                        <Icon name="bulb" size="xs" />
+                        <span>Thinking</span>
+                      </button>
+                    </div>
+
+                    {/* 发送按钮 (圆形陶土色) */}
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={!inputText.trim() && composerAttachments.length === 0}
+                      className="size-8 rounded-lg flex items-center justify-center transition-all duration-150 disabled:opacity-30 disabled:cursor-not-allowed bg-clay hover:bg-clay-hover text-white shadow-sm active:scale-95 shrink-0"
+                    >
+                      <Icon name="arrowRight" size="sm" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3.2 独立思考折叠器展示 (修复图片 0 中的尺寸与截断问题) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ComponentShowcase
+              title="思考过程状态机 (Thinking Accordion)"
+              tag=".df-accordion-guide"
+              code={`<div className="border rounded-lg overflow-hidden bg-neutral-50/70">
+  <div onClick={() => setOpen(!open)} className="flex justify-between p-3 cursor-pointer">
+    <div className="flex items-center gap-2">
+      <span className="animate-quiet-dot">...</span>
+      <span>Thought for 3.8 seconds</span>
+    </div>
+    <Icon name="chevronDown" />
+  </div>
+  {/* CSS Grid 0fr -> 1fr 解决高度抖动 */}
+  <div className="grid transition-[grid-template-rows] duration-200" style={{ gridTemplateRows: open ? "1fr" : "0fr" }}>
+    <div className="min-h-0 overflow-hidden p-3 font-mono text-xs">...</div>
+  </div>
+</div>`}
+              description="彻底解决高度抖动与底部截断问题。提供【思考中三点跳动】与【思考完毕收拢】状态切换，内容舒展无压迫。"
+            >
+              <div className="space-y-3">
+                {/* 状态切换按钮 */}
+                <div className="flex items-center justify-between pb-1">
+                  <span className="text-xs text-neutral-500 font-medium">交互状态切换测试：</span>
+                  <button
+                    onClick={() => setIsolatedThinkingActive(!isolatedThinkingActive)}
+                    className="h-7 px-3 rounded-md bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-xs font-mono font-medium transition-colors"
+                  >
+                    {isolatedThinkingActive ? "状态: 🔴 正在思考中..." : "状态: 🟢 已完成 (Thought for 3.8s)"}
+                  </button>
+                </div>
+
+                {/* 思考折叠器本体 (严格 8px 圆角与清晰无截断边框) */}
+                <div className="border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden bg-neutral-50/80 dark:bg-neutral-900/50">
+                  <div
+                    onClick={() => !isolatedThinkingActive && setIsolatedThinkingOpen(!isolatedThinkingOpen)}
+                    className="flex items-center justify-between px-3.5 py-2.5 cursor-pointer select-none hover:bg-neutral-100/60 dark:hover:bg-neutral-800/60 transition-colors"
+                  >
+                    <div className="flex items-center gap-2 text-xs text-neutral-700 dark:text-neutral-300 font-medium">
+                      {isolatedThinkingActive ? (
+                        <>
+                          <div className="inline-flex items-center gap-[3px]">
+                            <span className="size-[3.5px] rounded-full bg-clay" style={{ animation: "1.9s infinite timeline-quiet-dot", animationDelay: "0s" }} />
+                            <span className="size-[3.5px] rounded-full bg-clay" style={{ animation: "1.9s infinite timeline-quiet-dot", animationDelay: "0.15s" }} />
+                            <span className="size-[3.5px] rounded-full bg-clay" style={{ animation: "1.9s infinite timeline-quiet-dot", animationDelay: "0.3s" }} />
+                          </div>
+                          <span className="text-clay font-semibold">Thinking deeply...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="size-1.5 rounded-full bg-neutral-400" />
+                          <span>Thought for 3.8 seconds</span>
+                        </>
+                      )}
+                    </div>
+                    {!isolatedThinkingActive && (
+                      <Icon name="chevronDown" size="xs" className={`text-neutral-400 transition-transform duration-200 ${isolatedThinkingOpen ? "rotate-180" : ""}`} />
+                    )}
+                  </div>
+
+                  {/* 展开内容区域 (CSS Grid 0fr -> 1fr) */}
+                  <div
+                    className="grid transition-[grid-template-rows] duration-200 ease-[cubic-bezier(.19,1,.22,1)]"
+                    style={{ gridTemplateRows: isolatedThinkingOpen || isolatedThinkingActive ? "1fr" : "0fr" }}
+                  >
+                    <div className="min-h-0 overflow-hidden px-3.5 pb-3 pt-2 text-xs leading-relaxed text-neutral-600 dark:text-neutral-400 font-mono border-t border-neutral-200/70 dark:border-neutral-800/80 space-y-1">
+                      <div>&gt; [Phase 1] Resolving Claude AST component hierarchy tokens</div>
+                      <div>&gt; [Phase 2] Computing border-radius matrix: 6px/8px/12px/18px/20px</div>
+                      <div>&gt; [Phase 3] Attaching real interactive file upload listeners</div>
+                      <div className="text-clay font-medium">&gt; [Phase 4] Output ready for client review</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ComponentShowcase>
+
+            {/* 3.3 真实附件上传与磁贴系统 (修复图片 1 中无交互的问题) */}
+            <ComponentShowcase
+              title="附件上传磁贴与真实模拟系统"
+              tag=".cds-attachment"
+              code={`<div className="w-36 h-28 rounded-[10px] border p-3 flex flex-col justify-between">
+  <div className="flex justify-between">
+    <span className="text-[10px] uppercase font-mono">CODE</span>
+    <button>×</button>
+  </div>
+  <div className="truncate text-xs font-medium">schema.ts</div>
+</div>`}
+              description="完整的交互式附件管理系统，支持模拟不同类型文件上传、进度脉冲与一键清空删除。"
+            >
+              <div className="space-y-4">
+                {/* 上传动作按钮栏 */}
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleRealUpload}
+                      multiple
+                      className="hidden"
+                    />
+                    <button
+                      onClick={() => fileInputRef.current.click()}
+                      className="h-7 px-2.5 rounded-md bg-clay text-white text-xs font-medium hover:bg-clay-hover shadow-xs flex items-center gap-1 transition-colors"
+                    >
+                      <Icon name="upload" size="xs" />
+                      <span>上传本地文件</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        const newF = {
+                          id: Date.now(),
+                          name: `tokens-${demoFiles.length + 1}.json`,
+                          size: "8.6 KB",
+                          type: "JSON",
+                          icon: "fileCode",
+                          uploading: true,
+                        };
+                        setDemoFiles([...demoFiles, newF]);
+                        setTimeout(() => setDemoFiles((prev) => prev.map((f) => (f.id === newF.id ? { ...f, uploading: false } : f))), 500);
+                      }}
+                      className="h-7 px-2.5 rounded-md border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-medium transition-colors"
+                    >
+                      + 模拟 JSON
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => setDemoFiles([])}
+                    className="text-xs text-neutral-400 hover:text-red-500 font-mono transition-colors"
+                  >
+                    清空附件
+                  </button>
+                </div>
+
+                {/* 附件展示网格 */}
+                <div className="flex items-center gap-3 overflow-x-auto py-2 min-h-[120px]">
+                  {demoFiles.length === 0 ? (
+                    <div className="w-full text-center py-6 text-xs text-neutral-400 font-mono border border-dashed border-neutral-300 dark:border-neutral-800 rounded-lg">
+                      暂无附件，点击上方按钮模拟上传文件
+                    </div>
+                  ) : (
+                    demoFiles.map((f) => (
+                      <div
+                        key={f.id}
+                        className={`w-36 h-28 rounded-[10px] border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-3 flex flex-col justify-between shrink-0 shadow-xs transition-all ${
+                          f.uploading ? "animate-pulse border-clay/60" : ""
+                        }`}
+                        style={{ animation: "file-thumbnail-grow-in 0.25s cubic-bezier(.165, .84, .44, 1)" }}
+                      >
+                        <div className="flex justify-between items-start">
+                          <span className="text-[10px] font-mono uppercase bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-neutral-600 dark:text-neutral-400 flex items-center gap-1">
+                            <Icon name={f.icon} size="xs" />
+                            <span>{f.type}</span>
+                          </span>
+                          <button
+                            onClick={() => removeDemoFile(f.id)}
+                            className="text-xs text-neutral-400 hover:text-red-500"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-neutral-900 dark:text-neutral-100 truncate">{f.name}</div>
+                          <div className="text-[10px] text-neutral-400 font-mono mt-0.5">{f.uploading ? "Uploading..." : f.size}</div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </ComponentShowcase>
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================================================
+    // 4. SECTION: Interactive Controls & Form Inputs
+    // ==========================================================================
+    function ControlsSection() {
+      const [segmentedIndex, setSegmentedIndex] = useState(0);
+      const [toggleValue, setToggleValue] = useState(true);
+      const segmentedTabs = ["Chat", "Projects", "Artifacts", "Settings"];
+
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* 4.1 按钮尺寸与变体阶梯 */}
+          <ComponentShowcase
+            title="按钮尺寸阶梯与按压反馈"
+            tag=".cds-btn-squish"
+            code={`<button className="h-8 px-3.5 rounded-lg bg-clay text-white text-sm font-medium active:scale-95">
+  Primary Button
+</button>`}
+            description="从 24px (XS: rounded-md 6px) 到 40px (LG: rounded-xl 12px) 的规范阶梯，支持 Primary、Secondary、Ghost 变体。"
+          >
+            <div className="space-y-4">
+              {/* Sizes */}
+              <div>
+                <div className="text-[11px] font-mono text-neutral-400 uppercase mb-2">尺寸与对应圆角阶梯</div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button className="h-6 px-2 rounded-md bg-clay text-white text-xs font-medium hover:bg-clay-hover active:scale-95 transition-all">XS (24px, 6px)</button>
+                  <button className="h-7 px-2.5 rounded-lg bg-clay text-white text-xs font-medium hover:bg-clay-hover active:scale-95 transition-all">SM (28px, 8px)</button>
+                  <button className="h-8 px-3.5 rounded-lg bg-clay text-white text-sm font-medium hover:bg-clay-hover active:scale-95 transition-all">MD (32px, 8px)</button>
+                  <button className="h-10 px-5 rounded-xl bg-clay text-white text-sm font-medium hover:bg-clay-hover active:scale-95 transition-all">LG (40px, 12px)</button>
+                </div>
+              </div>
+
+              {/* Variants */}
+              <div>
+                <div className="text-[11px] font-mono text-neutral-400 uppercase mb-2">核心变体 (Variants) • 遵循无边框与表面微对比</div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button className="h-8 px-3.5 rounded-lg bg-clay text-white text-sm font-medium hover:bg-clay-hover cds-shadow-sm active:scale-[0.98] transition-all flex items-center gap-1.5 border-0">
+                    <Icon name="spark" size="xs" />
+                    <span>Primary 陶土色</span>
+                  </button>
+                  <button className="h-8 px-3.5 rounded-lg bg-[var(--cds-fill-secondary)] hover:bg-[var(--cds-fill-secondary-hover)] text-neutral-800 dark:text-neutral-200 text-sm font-medium active:scale-[0.98] transition-all border-0 cds-shadow-sm">
+                    Secondary 柔和填充 (0边框)
+                  </button>
+                  <button className="h-8 px-3 rounded-lg text-neutral-600 dark:text-neutral-400 text-sm font-medium cds-hover-ghost transition-all border-0">
+                    Ghost 纯悬停 (0边框)
+                  </button>
+                  <button className="h-8 px-3 rounded-lg bg-transparent text-neutral-700 dark:text-neutral-300 text-sm font-medium cds-hover-ghost transition-all" style={{ boxShadow: "inset 0 0 0 1px var(--cds-border)" }}>
+                    Outline 发丝线框 (仅限扁平画布)
+                  </button>
+                  <button className="size-8 rounded-lg flex items-center justify-center text-neutral-500 cds-hover-ghost transition-all border-0">
+                    <Icon name="settings" size="sm" />
+                  </button>
+                </div>
+                <p className="text-[11px] text-neutral-400 mt-2 font-mono">
+                  💡 规范法则：Secondary 按钮默认采用 Surface-2 浅底填充，容器内部严禁使用带边框的按钮，防止视觉套娃。
+                </p>
+              </div>
+            </div>
+          </ComponentShowcase>
+
+          {/* 4.2 分段选择器 Segmented Control */}
+          <ComponentShowcase
+            title="分段滑动胶囊 (纯几何比例绝对对齐)"
+            tag=".df-pills[data-segmented]"
+            code={`<div className="relative h-9 p-[2px] rounded-full bg-neutral-200/80">
+  <div style={{ left: "calc(2px + active * (100% - 4px) / total)" }} />
+</div>`}
+            description="全圆角 999px 轨道、2px 内边距、纯几何数学公式绝对对齐滑块，支持容器查询 @container (max-width: 254px) 折叠。"
+          >
+            <div className="py-2 space-y-4">
+              <div
+                className="relative h-9 p-[2px] rounded-full bg-neutral-200/80 dark:bg-neutral-800/90 flex items-stretch select-none"
+                style={{ containerType: "inline-size" }}
+              >
+                {/* Absolute Geometric Sliding Indicator */}
+                <div
+                  className="absolute top-[2px] bottom-[2px] rounded-full bg-white dark:bg-neutral-700 shadow-sm transition-all duration-150 ease-[cubic-bezier(.32,.72,0,1)] pointer-events-none"
+                  style={{
+                    left: `calc(2px + ${segmentedIndex} * (100% - 4px) / ${segmentedTabs.length})`,
+                    width: `calc((100% - 4px) / ${segmentedTabs.length})`,
+                    boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.06), 0 1px 2px 0 rgba(0,0,0,0.08)"
+                  }}
+                />
+
+                {segmentedTabs.map((tab, idx) => (
+                  <button
+                    key={tab}
+                    onClick={() => setSegmentedIndex(idx)}
+                    className={`relative z-10 flex-1 h-full flex items-center justify-center text-xs font-[470] rounded-full transition-colors truncate ${
+                      segmentedIndex === idx
+                        ? "text-neutral-900 dark:text-white font-semibold"
+                        : "text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-300"
+                    }`}
+                  >
+                    <span>{tab}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* iOS Style Switch & Toggle */}
+              <div className="flex items-center justify-between p-3 rounded-lg bg-neutral-50 dark:bg-neutral-900/60 border border-neutral-100 dark:border-neutral-800">
+                <span className="text-xs font-medium text-neutral-800 dark:text-neutral-200">Extended Thinking Reasoning</span>
+                <button
+                  onClick={() => setToggleValue(!toggleValue)}
+                  className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 ease-in-out focus:outline-none ${toggleValue ? "bg-clay" : "bg-neutral-300 dark:bg-neutral-700"}`}
+                >
+                  <div
+                    className={`size-5 rounded-full bg-white shadow-md transform transition-transform duration-200 ease-in-out ${toggleValue ? "translate-x-5" : "translate-x-0"}`}
+                  />
+                </button>
+              </div>
+            </div>
+          </ComponentShowcase>
+        </div>
+      );
+    }
+
+    // ==========================================================================
+    // 5. SECTION: Code, Artifacts & Previews
+    // ==========================================================================
+    function CodeArtifactsSection() {
+      const [copied, setCopied] = useState(false);
+      const sampleCode = `// Claude Design System - Variable Font Optimization
+export const irradiationCompensation = {
+  lightWeight: 500,
+  darkWeight: 465, // Active optical thinning
+  delta: -35
+};`;
+
+      const handleCopyCode = () => {
+        navigator.clipboard.writeText(sampleCode);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2500);
+      };
+
+      return (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* 5.1 代码块高亮与 2.5s 状态机 */}
+          <ComponentShowcase
+            title="代码块容器与 2.5s 复制衰减"
+            tag='data-cds="CodeBlock"'
+            code={`<div className="rounded-xl bg-[#0d0d0c] font-mono text-xs">
+  <div className="header flex justify-between p-3 border-b">
+    <span>typescript</span>
+    <button onClick={copy}>Copy code</button>
+  </div>
+  <pre>{code}</pre>
+</div>`}
+            description="暗黑背景代码块（rounded-xl 12px），点击复制后即刻变为绿色勾选，静默展示 2.5 秒后平滑淡退（saved-check-decay）。"
+          >
+            <div className="rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-[#0d0d0c] text-neutral-200 font-mono text-xs shadow-md">
+              <div className="flex items-center justify-between px-3.5 py-2 bg-neutral-950/80 border-b border-neutral-800">
+                <span className="text-neutral-400 flex items-center gap-1.5 text-[11px]">
+                  <Icon name="fileCode" size="xs" />
+                  <span>typescript</span>
+                </span>
+                <button
+                  onClick={handleCopyCode}
+                  className="flex items-center gap-1 text-[11px] text-neutral-400 hover:text-white transition-colors"
+                >
+                  {copied ? (
+                    <span className="text-green-400 flex items-center gap-1" style={{ animation: "saved-check-decay 0.35s ease-out 2.5s forwards" }}>
+                      <Icon name="check" size="xs" />
+                      <span>Copied!</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1">
+                      <Icon name="copy" size="xs" />
+                      <span>Copy code</span>
+                    </span>
+                  )}
+                </button>
+              </div>
+              <pre className="p-4 overflow-x-auto leading-relaxed text-neutral-300 font-mono">{sampleCode}</pre>
+            </div>
+          </ComponentShowcase>
+
+          {/* 5.2 Artifacts 预览卡片 PreviewCard */}
+          <ComponentShowcase
+            title="Artifacts 产物预览卡片"
+            tag='data-cds="PreviewCard"'
+            code={`<div className="rounded-xl border bg-white p-3.5 flex items-center justify-between">
+  <div className="flex items-center gap-3">
+    <Icon name="fileCode" />
+    <div>
+      <div>Interactive Canvas</div>
+      <div>React • v1</div>
+    </div>
+  </div>
+  <button className="bg-clay text-white px-3 py-1 rounded-lg">Open</button>
+</div>`}
+            description="当模型生成网页、图表或代码时，在聊天流中呈现的可交互 Artifact 卡片（rounded-xl 12px）。"
+          >
+            <div className="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="size-10 rounded-lg bg-clay/10 text-clay flex items-center justify-center shrink-0">
+                    <Icon name="fileCode" size="md" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 truncate">
+                      Interactive Dashboard Component
+                    </div>
+                    <div className="text-xs text-neutral-400 flex items-center gap-2 mt-0.5 font-mono">
+                      <span>React • Tailwind</span>
+                      <span>•</span>
+                      <span className="px-1.5 py-0.2 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500">v2 (Latest)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <button className="h-8 px-3 rounded-lg bg-clay text-white text-xs font-medium hover:bg-clay-hover shadow-xs flex items-center gap-1.5 transition-all">
+                    <Icon name="play" size="xs" />
+                    <span>Open in Artifacts</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-lg bg-neutral-50 dark:bg-neutral-950/50 border border-neutral-100 dark:border-neutral-800/80 text-[11px] text-neutral-500 flex items-center justify-between font-mono">
+                <span>50/50 Desktop Split Panel Support</span>
+                <Icon name="externalLink" size="xs" className="text-neutral-400" />
+              </div>
+            </div>
+          </ComponentShowcase>
+        </div>
+      );
+    }
+
+    // ==========================================================================
+    // 6. SECTION: Dialogs, Menus & Overlays
+    // ==========================================================================
+    function OverlaysSection() {
+      const [showModal, setShowModal] = useState(false);
+      const [showToast, setShowToast] = useState(false);
+
+      return (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* 6.1 确认对话框 ConfirmationDialog */}
+          <ComponentShowcase
+            title="二次确认弹窗对话框"
+            tag='data-cds="ConfirmationDialog"'
+            code={`<div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center">
+  <div className="rounded-2xl bg-white p-5 max-w-sm">
+    <h3>Delete Project?</h3>
+    <button>Cancel</button>
+    <button className="bg-red-600 text-white">Delete</button>
+  </div>
+</div>`}
+            description="带有高斯模糊背景遮罩的确认卡片（rounded-2xl 16px 圆角），包含取消与毁灭性动作。"
+          >
+            <div className="flex flex-col items-center justify-center py-4">
+              <button
+                onClick={() => setShowModal(true)}
+                className="h-9 px-4 rounded-lg bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 text-xs font-medium hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors shadow-xs"
+              >
+                唤起确认弹窗 (Trigger Dialog)
+              </button>
+
+              {/* Modal Overlay */}
+              {showModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-fade">
+                  <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-[#1a1a19] p-5 cds-shadow-lg border border-neutral-200/80 dark:border-neutral-800 space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="size-10 rounded-full bg-red-100 dark:bg-red-950/50 text-red-600 flex items-center justify-center shrink-0">
+                        <Icon name="trash" size="md" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Delete Conversation?</h4>
+                        <p className="text-xs text-neutral-500 mt-0.5">This will permanently remove the chat history.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-end gap-2 pt-2">
+                      <button
+                        onClick={() => setShowModal(false)}
+                        className="h-8 px-3.5 rounded-lg text-xs font-medium text-neutral-700 dark:text-neutral-300 border-0 cds-hover-ghost"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => setShowModal(false)}
+                        className="h-8 px-3.5 rounded-lg bg-red-600 text-white text-xs font-medium hover:bg-red-700 cds-shadow-sm active:scale-[0.98] transition-all"
+                      >
+                        Delete Forever
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </ComponentShowcase>
+
+          {/* 6.2 上下文浮动菜单 ContextMenu */}
+          <ComponentShowcase
+            title="上下文快捷菜单 (双环 Popover 浮层)"
+            tag='data-cds="ContextMenu"'
+            code={`<div className="w-48 rounded-xl bg-white dark:bg-[#222220] cds-shadow-popover p-1.5">
+  <div className="px-2.5 py-1.5 rounded-lg text-xs cds-hover-ghost">Duplicate</div>
+</div>`}
+            description="带有 --cds-shadow-popover 真实双环（深色内高光/浅色外轮廓）深度弥散投影的浮动弹出菜单，支持键盘快捷键勋章。"
+          >
+            <div className="w-full max-w-xs mx-auto rounded-xl bg-white dark:bg-[#222220] p-1.5 cds-shadow-popover space-y-0.5">
+              {[
+                { name: "Copy Response", icon: "copy", kbd: "⌘C" },
+                { name: "Pin to Project", icon: "pin", kbd: "⌘P" },
+                { name: "Share Conversation", icon: "externalLink", kbd: "⌘S" },
+              ].map((m, idx) => (
+                <div
+                  key={idx}
+                  className="px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs text-neutral-700 dark:text-neutral-300 cds-hover-ghost cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <Icon name={m.icon} size="xs" className="text-neutral-400" />
+                    <span>{m.name}</span>
+                  </div>
+                  <kbd className="text-[10px] font-mono text-neutral-400">{m.kbd}</kbd>
+                </div>
+              ))}
+            </div>
+          </ComponentShowcase>
+
+          {/* 6.3 瞬时轻提示 Toast */}
+          <ComponentShowcase
+            title="轻量通知 Toast"
+            tag='data-cds="Toast"'
+            code={`<div className="px-4 py-2.5 rounded-xl bg-neutral-900 text-white shadow-xl flex items-center gap-2">
+  <Icon name="check" className="text-emerald-400" />
+  <span>Settings saved</span>
+</div>`}
+            description="操作完成时在右下角悬浮升起的反馈提示，包含绿色勾选与自动消退动画。"
+          >
+            <div className="flex flex-col items-center justify-center py-4 space-y-3">
+              <button
+                onClick={() => { setShowToast(true); setTimeout(() => setShowToast(false), 3000); }}
+                className="h-8 px-3 rounded-lg bg-clay text-white text-xs font-medium hover:bg-clay-hover shadow-xs"
+              >
+                触发 Toast 提示
+              </button>
+
+              {showToast && (
+                <div className="p-3 rounded-xl bg-neutral-900 text-white shadow-xl border border-neutral-700 flex items-center gap-2.5 text-xs animate-bounce">
+                  <span className="size-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                    <Icon name="check" size="xs" />
+                  </span>
+                  <span>Artifact code exported successfully!</span>
+                </div>
+              )}
+            </div>
+          </ComponentShowcase>
+        </div>
+      );
+    }
+
+    // ==========================================================================
+    // 7. SECTION: Motion, Status & Shimmer
+    // ==========================================================================
+    function MotionSection() {
+      const calcSpring = (k, c, m, t) => {
+        const w0 = Math.sqrt(k / m);
+        const zeta = c / (2 * Math.sqrt(m * k));
+        if (zeta < 1) {
+          const wd = w0 * Math.sqrt(1 - zeta * zeta);
+          return 1 - Math.exp(-zeta * w0 * t) * (Math.cos(wd * t) + (zeta / Math.sqrt(1 - zeta * zeta)) * Math.sin(wd * t));
+        }
+        return 1 - Math.exp(-w0 * t) * (1 + w0 * t);
+      };
+
+      const [positions, setPositions] = useState({ b: 0, c: 0, f: 0, d: 0 });
+      const [isRacing, setIsRacing] = useState(false);
+
+      const runSpringRace = () => {
+        setIsRacing(true);
+        const start = performance.now();
+        const duration = 1.3;
+
+        const tick = (now) => {
+          const t = (now - start) / 1000;
+          setPositions({
+            b: calcSpring(600, 30, 1, t),
+            c: calcSpring(320, 28, 1, t),
+            f: calcSpring(380, 18, 1, t),
+            d: calcSpring(1200, 80, 0.1, t),
+          });
+          if (t < duration) {
+            requestAnimationFrame(tick);
+          } else {
+            setPositions({ b: 1, c: 1, f: 1, d: 1 });
+            setIsRacing(false);
+          }
+        };
+        requestAnimationFrame(tick);
+      };
+
+      return (
+        <div className="space-y-6">
+          {/* 7.1 状态指示灯与呼吸动效 */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <ComponentShowcase
+              title="陶土呼吸指示灯"
+              tag='status-dot[data-kind="clay"]'
+              description="运行中会话或连接就绪时，陶土色圆点以 0.92 ~ 1.08 比例进行柔和明度呼吸。"
+            >
+              <div className="flex items-center justify-center py-4 gap-3">
+                <span className="size-3.5 rounded-full bg-clay shadow-sm" style={{ animation: "dframe-clay-breathe 2.4s infinite ease-in-out" }} />
+                <span className="text-xs font-mono text-neutral-500">dframe-clay-breathe</span>
+              </div>
+            </ComponentShowcase>
+
+            <ComponentShowcase
+              title="活动脉冲指示灯"
+              tag='status-dot[data-kind="running"]'
+              description="流式返回输出中，指示灯执行 1.2s 循环脉冲扩散。"
+            >
+              <div className="flex items-center justify-center py-4 gap-3">
+                <span className="size-3 rounded-full bg-emerald-500" style={{ animation: "dframe-dot-pulse 1.2s infinite ease-in-out" }} />
+                <span className="text-xs font-mono text-neutral-500">dframe-dot-pulse</span>
+              </div>
+            </ComponentShowcase>
+
+            <ComponentShowcase
+              title="思考波浪跳动 Quiet Dots"
+              tag=".df-tab-dot-running"
+              description="三颗陶土点依次延迟 0.15s / 0.3s，产生水波纹跃升。"
+            >
+              <div className="flex items-center justify-center py-4 gap-2">
+                <div className="inline-flex items-center gap-[5px]">
+                  <span className="size-2 rounded-full bg-clay" style={{ animation: "1.9s infinite timeline-quiet-dot", animationDelay: "0s" }} />
+                  <span className="size-2 rounded-full bg-clay" style={{ animation: "1.9s infinite timeline-quiet-dot", animationDelay: "0.15s" }} />
+                  <span className="size-2 rounded-full bg-clay" style={{ animation: "1.9s infinite timeline-quiet-dot", animationDelay: "0.3s" }} />
+                </div>
+              </div>
+            </ComponentShowcase>
+          </div>
+
+          {/* 7.2 骨架屏高级倾斜扫光 */}
+          <ComponentShowcase
+            title="高级倾斜骨架屏 (Skeleton Shimmer)"
+            tag='data-cds="Skeleton"'
+            code={`<div className="skeleton-shimmer h-4 rounded w-3/4" />`}
+            description="内容加载中展示的占位条，90 度渐变遮罩伴随 cds-skeleton-sweep 关键帧在 1.8 秒内横向扫光。"
+          >
+            <div className="max-w-md mx-auto space-y-3 p-2">
+              <div className="flex items-center gap-3">
+                <div className="size-10 rounded-full skeleton-shimmer shrink-0" />
+                <div className="space-y-1.5 flex-1">
+                  <div className="h-3.5 skeleton-shimmer rounded w-2/5" />
+                  <div className="h-2.5 skeleton-shimmer rounded w-4/5" />
+                </div>
+              </div>
+              <div className="space-y-2 pt-2">
+                <div className="h-3 skeleton-shimmer rounded w-full" />
+                <div className="h-3 skeleton-shimmer rounded w-5/6" />
+                <div className="h-3 skeleton-shimmer rounded w-2/3" />
+              </div>
+            </div>
+          </ComponentShowcase>
+
+          {/* 7.3 四大弹簧物理预设同屏竞速 */}
+          <ComponentShowcase
+            title="四大物理弹簧预设同屏竞速实验室 (Spring Physics)"
+            tag="AST-Extracted Presets"
+            description="点击一键发射，观察 600/30 (Button 高频)、320/28 (Card 顺滑)、380/18 (Bouncy 超调) 与 1200/80 (Drag 极速咬合) 跑向 100% 靶心的差异。"
+          >
+            <div className="space-y-4">
+              <div className="flex justify-end">
+                <button
+                  onClick={runSpringRace}
+                  disabled={isRacing}
+                  className="h-8 px-4 rounded-lg bg-clay text-white text-xs font-medium hover:bg-clay-hover shadow-xs flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  <Icon name="spark" size="xs" />
+                  <span>▶ 一键同屏发射物理赛跑</span>
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { id: "b", name: "Button & Small Controls", k: 600, c: 30, desc: "微弹迅速收敛" },
+                  { id: "c", name: "Card / Popover Reveal", k: 320, c: 28, desc: "顺滑轻柔着陆" },
+                  { id: "f", name: "Bouncy Light Feedback", k: 380, c: 18, desc: "+19.4% 明显回弹" },
+                  { id: "d", name: "High Damping Panel Drag", k: 1200, c: 80, desc: "极速咬合零过冲" },
+                ].map((s) => (
+                  <div key={s.id} className="p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/60 space-y-2">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-semibold text-neutral-900 dark:text-neutral-100">{s.name}</span>
+                      <span className="text-[11px] font-mono text-clay">stiffness: {s.k} | damping: {s.c}</span>
+                    </div>
+
+                    {/* Runway */}
+                    <div className="relative h-8 rounded-lg bg-neutral-200/60 dark:bg-neutral-950 p-1 flex items-center overflow-hidden border border-neutral-200 dark:border-neutral-800">
+                      <div className="absolute top-0 bottom-0 border-r-2 border-dashed border-[#d97757]/60" style={{ left: "75%" }} />
+                      <div
+                        className="absolute h-6 rounded bg-white dark:bg-neutral-800 shadow px-2 flex items-center gap-1 text-[11px] font-mono font-bold"
+                        style={{ left: `${Math.max(0, positions[s.id] * 75)}%` }}
+                      >
+                        <Icon name="spark" size="xs" className="text-clay" />
+                        <span>{Math.round(positions[s.id] * 100)}%</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </ComponentShowcase>
+        </div>
+      );
+    }
+
+    // ==========================================================================
+    // 8. SECTION: Borders vs. Borderless & Anti-Bloat Architecture
+    // ==========================================================================
+    function BordersArchitectureSection({ isXray, setIsXray }) {
+      const [activeMatrixTab, setActiveMatrixTab] = useState("borderless");
+
+      const matrixData = {
+        borderless: {
+          id: "borderless",
+          title: "🚫 坚决无边框 (Strictly Borderless)",
+          badge: "0 边框 • 呼吸感",
+          badgeColor: "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400",
+          desc: "绝大多数展示型内容、文本流、以及嵌套在已有带边框容器内部的子操作，必须坚决去除边框。",
+          items: [
+            { name: "AI 助手主回复正文", rule: "直接浮于 Surface 0 主画布上，严禁外包任何带有边框的卡片。" },
+            { name: "用户提问气泡 (User Bubble)", rule: "仅靠底色微对比 (浅色: #f0f4f8 / 深色: #20201e) 与 18px 大圆角聚合，0 边框。" },
+            { name: "容器内部的操作按钮", rule: "Composer、代码块、Modal 内部按钮一律降级为 Ghost (常态完全透明，悬停微背景)。" },
+            { name: "侧边栏与导航列表项", rule: "依靠垂直排版节奏与 Hover 背景微差区分，绝不给每个条目画框。" },
+            { name: "底部反馈工具条 (Reaction)", rule: "点赞、点踩、复制等图标按钮纯透明悬停，严禁封装在独立带边框胶囊里。" },
+            { name: "思考链展开日志 (Thinking)", rule: "无封闭外壳，依靠左侧单向极细向导线 (border-l-2) 与字体缩进区分。" },
+          ],
+        },
+        mandatory: {
+          id: "mandatory",
+          title: "📦 必须具备闭合外框 (Mandatory Closed Border)",
+          badge: "严格 1 层 • 物理实体",
+          badgeColor: "bg-blue-100 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400",
+          desc: "自成一体、代表独立沙盒、实体化文件或跨越 Z 轴层级的浮动实体，才具备闭合边框的合法授权。",
+          items: [
+            { name: "常驻聊天输入框 (Composer)", rule: "全屏视线唯一的闭合交互控制台，作为用户输入的落脚锚点 (rounded-[20px] border)。" },
+            { name: "语法高亮代码块 (Code Sandbox)", rule: "独立的开发语言隔离沙盒，带有语言角标与外框 (rounded-xl border)。" },
+            { name: "文件附件卡片 (.cds-attachment)", rule: "代表一个被实体化上传的文件对象，具备 10px 圆角与外边框。" },
+            { name: "Artifact 独立产物卡片", rule: "代表外联生成的独立文档或应用，具备独立卡片边框与版本徽章。" },
+            { name: "模态弹窗与右键菜单 (Overlays)", rule: "脱离主画布流、悬浮于遮罩层上方的 Z-Index 浮层，必须带边框与弥散投影。" },
+          ],
+        },
+        divider: {
+          id: "divider",
+          title: "➖ 单向细线替代原则 (Hairline Divider)",
+          badge: "单向 1px • 拒绝嵌套框",
+          badgeColor: "bg-purple-100 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400",
+          desc: "容器内部需要划分区域时，严格使用 1px 单向细线，严禁为了划分上下结构而再套一个完整的矩形框。",
+          items: [
+            { name: "容器头部与内容区域划分", rule: "使用 border-b border-neutral-200/60 单向细线，绝不把 Header 封装成单独卡片。" },
+            { name: "下拉菜单与右键菜单分组", rule: "使用 border-t border-neutral-100 单向隔离不同功能组。" },
+            { name: "双栏分屏工作台中缝", rule: "使用 border-r 或 border-l 单线划分，两栏各自内部不再嵌套外框。" },
+            { name: "输入框底部操作栏分隔", rule: "在多行输入框内若需分隔文字区与按钮条，仅允许单条 border-t 细线。" },
+          ],
+        },
+        darkChamfer: {
+          id: "darkChamfer",
+          title: "🌓 深色模式 0.5px Inset Shadow 物理倒角",
+          badge: "光学反光 • 杜绝荧光线",
+          badgeColor: "bg-amber-100 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400",
+          desc: "在深色背景下，1px solid #444 会显得死板甚至刺眼。Claude 使用 0.5px 内阴影模拟真实工业硬件的光学倒角反光。",
+          items: [
+            { name: "物理倒角反光公式", rule: "box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);" },
+            { name: "双环微发光补偿", rule: "0 0 0 0.5px color-mix(in srgb, var(--cds-border-strong) 30%, transparent);" },
+            { name: "微弱外弥散沉降", rule: "0 4px 20px rgba(0, 0, 0, 0.4)，让暗色卡片沉入背景而非浮夸发亮。" },
+          ],
+        },
+      };
+
+      const currentTab = matrixData[activeMatrixTab];
+
+      return (
+        <div className="space-y-6">
+          {/* 1. 顶部控制条与哲学导读 */}
+          <div className="p-4 sm:p-5 rounded-xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1a1a19] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="size-2 rounded-full bg-clay" />
+                <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100 tracking-tight">
+                  前端核心设计准则：单边框原则 (The 1-Border Rule) 与表面微对比体系
+                </h3>
+              </div>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 max-w-2xl leading-relaxed">
+                很多大模型前端生成代码习惯将“视觉分组”直接映射为 <code>border</code>，造成<b>卡片套卡片、框中套框、按钮带框</b>的臃肿“俄罗斯套娃”界面。Claude 的核心设计哲学是<b>以表面层级 (Surface 0~3) 和留白区分层级，视线路径上严格控制闭合外框 ≤1 层</b>。
+              </p>
+            </div>
+
+            {/* X-Ray 开启开关 */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setIsXray(!isXray)}
+                className={"h-9 px-4 rounded-lg text-xs font-medium flex items-center gap-2 transition-all " + (isXray ? "bg-cyan-500 text-white shadow-md ring-2 ring-cyan-400/30" : "border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700")}
+              >
+                <Icon name={isXray ? "check" : "search"} size="xs" />
+                <span>{isXray ? "🔍 边框 X-Ray 透视已开启" : "🔍 开启全局边框 X-Ray 透视"}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 2. 真实痛点同屏对比：【套娃边框臃肿反模式】 vs 【Claude 单边框极简正模式】 */}
+          <div className="rounded-xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1a1a19] p-5 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <div>
+                <h4 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
+                  同屏对决：常见 AI 模型“套娃边框”臃肿病 vs Claude 生产级极简边界
+                </h4>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  完全相同的对话与输入功能，观察为什么左侧显得极其厚重、脏乱与窒息，而右侧通透舒展、呼吸感十足。
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-[11px] font-mono">
+                <span className="px-2 py-0.5 rounded bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400">
+                  左: 4层边框嵌套 (Bloat)
+                </span>
+                <span className="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400">
+                  右: 严格 ≤1层边框 (Clean)
+                </span>
+              </div>
+            </div>
+
+            {/* 对比展示网格 */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+              {/* 左侧：反模式 (Bloated) */}
+              <div className="p-4 rounded-xl border-2 border-dashed border-red-300 dark:border-red-900/60 bg-red-50/20 dark:bg-red-950/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-bold text-red-600 dark:text-red-400 flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-red-500" />
+                    <span>❌ 常见模型反模式：层层嵌套边框 (4 Layers of Borders)</span>
+                  </div>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-200 dark:bg-red-900 text-red-800 dark:text-red-200">
+                    视觉杂音超标
+                  </span>
+                </div>
+
+                {/* Layer 1: Outer Viewport Card with border */}
+                <div className="p-3 rounded-lg border-2 border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 space-y-3">
+                  <div className="text-[10px] font-mono text-neutral-400">📦 Viewport 外框 (Border 1)</div>
+
+                  {/* Layer 2: Assistant Message wrapped in border */}
+                  <div className="p-3 rounded-md border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 space-y-2">
+                    <div className="text-[10px] font-mono text-red-500">🚨 Assistant 消息被错误套框 (Border 2)</div>
+                    <div className="text-xs text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                      这是一段助手的回复。传统模型习惯给助手也加上完整线框和灰底，导致非常臃肿压抑。
+                    </div>
+
+                    {/* Layer 3: Action Toolbar wrapped in border inside message! */}
+                    <div className="p-1.5 rounded border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 flex items-center gap-1.5">
+                      <span className="text-[10px] font-mono text-red-500 mr-1">🚨 工具栏 (Border 3):</span>
+                      <button className="h-6 px-2 text-[10px] rounded border border-neutral-400 bg-white text-neutral-700 shadow-2xs">
+                        点赞 (Border 4!)
+                      </button>
+                      <button className="h-6 px-2 text-[10px] rounded border border-neutral-400 bg-white text-neutral-700 shadow-2xs">
+                        复制 (Border 4!)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Layer 2: Composer Box with border */}
+                  <div className="p-2.5 rounded-lg border-2 border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 space-y-2">
+                    <div className="text-[10px] font-mono text-neutral-400">📦 输入框容器 (Border 2)</div>
+                    {/* Layer 3: Inner textarea has its own border! */}
+                    <input
+                      className="w-full text-xs p-1.5 rounded border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200"
+                      value="输入框里又套了一个带边框的 input (Border 3!)"
+                      readOnly
+                    />
+                    <div className="flex justify-between items-center pt-1">
+                      {/* Layer 3: Buttons inside input container have borders! */}
+                      <button className="h-6 px-2 text-[10px] rounded border border-neutral-300 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
+                        + 上传文件 (Border 3!)
+                      </button>
+                      <button className="h-6 px-3 text-[10px] rounded border border-neutral-400 dark:border-neutral-600 bg-neutral-200 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200 font-bold">
+                        发送 (Border 3!)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-[11px] text-red-600 dark:text-red-400 font-mono pt-1">
+                  ⚠️ 臃肿点评：4层闭合边框层层嵌套，线条将视线打得支离破碎，界面如同旧式表格，极其厚重压抑。
+                </div>
+              </div>
+
+              {/* 右侧：正模式 (Claude Clean) */}
+              <div className="p-4 rounded-xl border-2 border-emerald-500/40 dark:border-emerald-500/30 bg-emerald-50/20 dark:bg-emerald-950/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-emerald-500" />
+                    <span>✅ Claude 生产级：表面微对比与单边框极简 (1 Closed Border Max)</span>
+                  </div>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-200 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200">
+                    通透轻盈
+                  </span>
+                </div>
+
+                {/* Canvas: Surface 0, NO outer viewport border! */}
+                <div className="p-3 rounded-lg bg-neutral-50/70 dark:bg-neutral-900/40 space-y-3">
+                  <div className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">
+                    ✨ 主画布 Surface 0 (无边框 border-0，自然留白透气)
+                  </div>
+
+                  {/* Assistant Message: border-0, bg-transparent! Floats naturally */}
+                  <div className="space-y-1.5 pl-1">
+                    <div className="flex items-center gap-1.5 text-xs text-neutral-400">
+                      <Icon name="spark" size="xs" className="text-clay" />
+                      <span className="font-semibold text-neutral-800 dark:text-neutral-200">Claude</span>
+                      <span className="text-[10px] font-mono text-emerald-500">(0 边框，无底色框)</span>
+                    </div>
+                    <div className="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed">
+                      助手文本直接浮在主画布上。层次由文字排版和垂直韵律自然形成，彻底抛弃封闭线框。
+                    </div>
+
+                    {/* Action Toolbar: Zero borders! Ghost icons only */}
+                    <div className="flex items-center gap-1 pt-0.5 text-neutral-400">
+                      <button className="p-1 rounded-md hover:bg-neutral-200/60 dark:hover:bg-neutral-800 hover:text-neutral-700 transition-colors">
+                        <Icon name="thumbsUp" size="xs" />
+                      </button>
+                      <button className="p-1 rounded-md hover:bg-neutral-200/60 dark:hover:bg-neutral-800 hover:text-neutral-700 transition-colors">
+                        <Icon name="copy" size="xs" />
+                      </button>
+                      <span className="text-[10px] font-mono text-emerald-500 ml-1">← Ghost 纯悬停图标，0 边框</span>
+                    </div>
+                  </div>
+
+                  {/* Composer: The ONLY single closed border! */}
+                  <div className="p-2.5 rounded-[16px] border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-2xs space-y-2">
+                    <div className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">
+                      ✨ Composer (全视线唯一的闭合边框，交互聚合锚点)
+                    </div>
+                    {/* Borderless Textarea */}
+                    <div className="text-xs text-neutral-400 px-1 font-sans">
+                      无边框输入区域 (border-0 outline-none bg-transparent)
+                    </div>
+                    {/* Hairline Divider inside composer */}
+                    <div className="flex justify-between items-center pt-1.5 border-t border-neutral-100 dark:border-neutral-800">
+                      {/* Ghost button inside composer */}
+                      <button className="h-6 px-2 text-[11px] rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-500 transition-colors flex items-center gap-1">
+                        <Icon name="spark" size="xs" />
+                        <span>+ Add content (Ghost 0边框)</span>
+                      </button>
+                      {/* Solid Fill button */}
+                      <button className="h-6 px-3 text-[11px] rounded-lg bg-clay text-white font-medium hover:bg-clay-hover shadow-xs transition-colors">
+                        Send (Solid Fill 0边框)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono pt-1">
+                  ✨ 极简精髓：单闭合边框原则 (1-Border Rule)，容器内部所有操作自动降级为 Ghost / Fill。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. 边框决策树矩阵 (Decision Tree Matrix) */}
+          <div className="rounded-xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1a1a19] p-5 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 dark:border-neutral-800 pb-3">
+              <div>
+                <h4 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
+                  边框决策树矩阵 (The Boundary Decision Matrix)
+                </h4>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  点击下方分类，查看不同前端场景在 Claude 设计体系下的边框授权规则。
+                </p>
+              </div>
+              {/* Tabs */}
+              <div className="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg overflow-x-auto scrollbar-none">
+                {Object.keys(matrixData).map((key) => {
+                  const tab = matrixData[key];
+                  const isSelected = activeMatrixTab === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setActiveMatrixTab(key)}
+                      className={"px-3 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-all " + (isSelected ? "bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white shadow-2xs" : "text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200")}
+                    >
+                      {tab.title.split(" ")[0]} {tab.title.split(" ")[1]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Tab Content Display */}
+            <div className="p-4 rounded-xl bg-neutral-50/60 dark:bg-neutral-900/40 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h5 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">{currentTab.title}</h5>
+                  <p className="text-xs text-neutral-500 mt-0.5">{currentTab.desc}</p>
+                </div>
+                <span className={"text-xs font-mono font-semibold px-2.5 py-1 rounded-full " + currentTab.badgeColor}>
+                  {currentTab.badge}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
+                {currentTab.items.map((item, idx) => (
+                  <div key={idx} className="p-3 rounded-lg border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-[#1a1a19] space-y-1 shadow-2xs">
+                    <div className="text-xs font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-1.5">
+                      <span className="size-1.5 rounded-full bg-clay" />
+                      <span>{item.name}</span>
+                    </div>
+                    <div className="text-[11px] text-neutral-500 dark:text-neutral-400 leading-relaxed font-sans">
+                      {item.rule}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* 4. 前端防臃肿 5 条黄金法则清单 (Checklist) */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+            <div className="p-3.5 rounded-xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1a1a19] space-y-1 shadow-2xs">
+              <div className="text-xs font-mono font-bold text-clay">RULE 01</div>
+              <div className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">单边框原则</div>
+              <p className="text-[11px] text-neutral-400 leading-relaxed">视线路径上严格控制闭合外框 ≤1 层，严禁框中套框。</p>
+            </div>
+            <div className="p-3.5 rounded-xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1a1a19] space-y-1 shadow-2xs">
+              <div className="text-xs font-mono font-bold text-clay">RULE 02</div>
+              <div className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">Ghost 降级</div>
+              <p className="text-[11px] text-neutral-400 leading-relaxed">容器已有边框时，内部按钮自动降级为透明悬停或纯面光。</p>
+            </div>
+            <div className="p-3.5 rounded-xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1a1a19] space-y-1 shadow-2xs">
+              <div className="text-xs font-mono font-bold text-clay">RULE 03</div>
+              <div className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">单向线替代</div>
+              <p className="text-[11px] text-neutral-400 leading-relaxed">划分上下结构用 1px border-b，绝不封装成两个独立卡片。</p>
+            </div>
+            <div className="p-3.5 rounded-xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1a1a19] space-y-1 shadow-2xs">
+              <div className="text-xs font-mono font-bold text-clay">RULE 04</div>
+              <div className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">表面色差优先</div>
+              <p className="text-[11px] text-neutral-400 leading-relaxed">依靠 Surface 0~3 之间的明度冷暖阶差区分边界，而非描边。</p>
+            </div>
+            <div className="p-3.5 rounded-xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-[#1a1a19] space-y-1 shadow-2xs">
+              <div className="text-xs font-mono font-bold text-clay">RULE 05</div>
+              <div className="text-xs font-semibold text-neutral-900 dark:text-neutral-100">深色物理倒角</div>
+              <p className="text-[11px] text-neutral-400 leading-relaxed">深色模式用 inset 0 0 0 1px 模拟倒角微光，杜绝死板粗白框。</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ==========================================================================
+    // MAIN APP COMPONENT (Single Page Storybook with Header & Section Jumps)
+    // ==========================================================================
+    function App() {
+      const [isDark, setIsDark] = useState(false);
+      const [isXray, setIsXray] = useState(false);
+
+      useEffect(() => {
+        if (isDark) {
+          document.documentElement.classList.add("dark");
+          document.body.className = "h-full bg-[#151515] text-[#f5f5f5] font-sans antialiased selection:bg-[#d97757]/30 selection:text-[#d97757]";
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.body.className = "h-full bg-[#fcfcfb] text-[#151515] font-sans antialiased selection:bg-[#d97757]/20 selection:text-[#d97757]";
+        }
+      }, [isDark]);
+
+      useEffect(() => {
+        if (isXray) {
+          document.documentElement.classList.add("xray-active");
+        } else {
+          document.documentElement.classList.remove("xray-active");
+        }
+      }, [isXray]);
+
+      const navSections = [
+        { id: "foundations", name: "01. 设计基石 (Tokens & Radii)" },
+        { id: "shell", name: "02. 应用框架 (App Shell)" },
+        { id: "chat", name: "03. 对话与输入 (Chat Core & Multi-Turn)" },
+        { id: "controls", name: "04. 交互表单 (Controls)" },
+        { id: "code", name: "05. 代码与产物 (Code & Artifacts)" },
+        { id: "overlays", name: "06. 弹窗与浮层 (Overlays)" },
+        { id: "motion", name: "07. 动效与物理 (Motion)" },
+        { id: "borders", name: "08. 边界哲学 (Borders & Anti-Bloat)" },
+      ];
+
+      return (
+        <div className="min-h-full flex flex-col">
+          {/* Top Sticky Header */}
+          <header className="sticky top-0 z-40 border-b border-neutral-200/80 dark:border-neutral-800 bg-[#fcfcfb]/90 dark:bg-[#151515]/90 backdrop-blur-md">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+              {/* Brand Title */}
+              <div className="flex items-center gap-3">
+                <div className="size-9 rounded-xl bg-clay text-white flex items-center justify-center shadow-sm">
+                  <Icon name="spark" size="sm" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-base font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+                      Claude Design System (CDS)
+                    </h1>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-clay/10 text-clay font-semibold">
+                      v1.28 Production
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-neutral-400 hidden sm:block">
+                    全量真实组件单页陈列馆 • 严格遵循规范圆角阶梯、边界极简与高保真交互
+                  </p>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2 sm:gap-3">
+                {/* X-Ray Border Toggle */}
+                <button
+                  onClick={() => setIsXray(!isXray)}
+                  className={"h-9 px-3 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition-all shadow-2xs " + (isXray ? "bg-cyan-500 text-white border-cyan-400 shadow-sm" : "border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700")}
+                  title="高亮页面所有闭合边框与嵌套边框"
+                >
+                  <Icon name={isXray ? "check" : "search"} size="xs" />
+                  <span className="hidden sm:inline">{isXray ? "X-Ray 透视: 开" : "🔍 边框 X-Ray"}</span>
+                  <span className="sm:hidden">X-Ray</span>
+                </button>
+
+                {/* Theme Toggle */}
+                <button
+                  onClick={() => setIsDark(!isDark)}
+                  className="h-9 px-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-medium flex items-center gap-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors shadow-2xs"
+                >
+                  <span>{isDark ? "🌙 深色" : "☀️ 浅色"}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Sub-bar: Category Quick Jump Nav */}
+            <div className="border-t border-neutral-100 dark:border-neutral-800/80 bg-neutral-50/50 dark:bg-neutral-900/30 overflow-x-auto scrollbar-none">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center gap-2">
+                {navSections.map((sec) => (
+                  <a
+                    key={sec.id}
+                    href={`#${sec.id}`}
+                    className="px-3 py-1 rounded-full text-xs font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-200/60 dark:hover:bg-neutral-800 whitespace-nowrap transition-colors"
+                  >
+                    {sec.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </header>
+
+          {/* Main Content: Single Page Flow */}
+          <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 pb-24 space-y-12">
+            {/* 01. Foundations */}
+            <section>
+              <SectionHeader
+                id="foundations"
+                number="01"
+                title="设计基石与设计令牌"
+                enTitle="Foundations & Radii Matrix"
+                description="4层表面微对比系统、陶土品牌色、全量圆角阶梯规范表 (2px~999px)、暗黑模式字重逆补偿及 Phosphor 矢量图标体系。"
+                badge="Tokens"
+              />
+              <div className="mt-6">
+                <FoundationsSection isDark={isDark} />
+              </div>
+            </section>
+
+            {/* 02. App Shell */}
+            <section>
+              <SectionHeader
+                id="shell"
+                number="02"
+                title="应用框架与系统级导航"
+                enTitle="App Shell & Navigation"
+                description="macOS 原生窗体标题栏、Hub Rail 主导航胶囊、全局 ⌘K 搜索命令条与最近会话列表项。"
+                badge="App Shell"
+              />
+              <div className="mt-6">
+                <AppShellSection />
+              </div>
+            </section>
+
+            {/* 03. Chat Core */}
+            <section>
+              <SectionHeader
+                id="chat"
+                number="03"
+                title="核心对话流与输入终端"
+                enTitle="Chat Core & Multi-Turn Session"
+                description="高保真全屏多轮会话视窗（思考折叠过程、代码高亮、Artifacts 产物卡片）、可交互文件上传系统与智能 Composer 终端。"
+                badge="Interactive Session"
+              />
+              <div className="mt-6">
+                <ChatCoreSection />
+              </div>
+            </section>
+
+            {/* 04. Controls */}
+            <section>
+              <SectionHeader
+                id="controls"
+                number="04"
+                title="按钮与交互表单控件"
+                enTitle="Buttons & Form Controls"
+                description="4 级按钮尺寸与变体、纯几何数学滑动分段胶囊、文本与数字输入框、iOS 弹簧开关与分栏下拉按钮。"
+                badge="Controls"
+              />
+              <div className="mt-6">
+                <ControlsSection />
+              </div>
+            </section>
+
+            {/* 05. Code & Artifacts */}
+            <section>
+              <SectionHeader
+                id="code"
+                number="05"
+                title="代码容器与产物卡片"
+                enTitle="Code & Artifacts"
+                description="语法高亮代码块容器、2.5 秒复制对勾衰减状态机、Artifacts 预览卡片与双栏分屏工作台。"
+                badge="Artifacts"
+              />
+              <div className="mt-6">
+                <CodeArtifactsSection />
+              </div>
+            </section>
+
+            {/* 06. Overlays */}
+            <section>
+              <SectionHeader
+                id="overlays"
+                number="06"
+                title="弹窗、浮动菜单与通知"
+                enTitle="Dialogs, Menus & Toasts"
+                description="二次确认高斯模糊弹窗对话框、右键上下文菜单、操作完成 Toast 轻量通知反馈与快捷键徽章。"
+                badge="Overlays"
+              />
+              <div className="mt-6">
+                <OverlaysSection />
+              </div>
+            </section>
+
+            {/* 07. Motion */}
+            <section>
+              <SectionHeader
+                id="motion"
+                number="07"
+                title="动效、状态呼吸与骨架屏"
+                enTitle="Motion, Status & Shimmer"
+                description="陶土色指示灯呼吸脉冲、思考三点跳跃循环、高级倾斜骨架屏扫光以及四大物理弹簧预设同屏竞速。"
+                badge="Motion Lab"
+              />
+              <div className="mt-6">
+                <MotionSection />
+              </div>
+            </section>
+
+            {/* 08. Borders & Anti-Bloat Architecture */}
+            <section>
+              <SectionHeader
+                id="borders"
+                number="08"
+                title="边界哲学与防臃肿架构"
+                enTitle="Borders vs. Borderless & Anti-Bloat Architecture"
+                description="深入剖析为什么传统模型容易生成层层嵌套的臃肿‘套娃边框’，以及 Claude 如何通过单边框法则 (1-Border Rule)、表面微对比及 Ghost 控件降级实现极致通透的现代感。"
+                badge="Boundary Rules"
+              />
+              <div className="mt-6">
+                <BordersArchitectureSection isXray={isXray} setIsXray={setIsXray} />
+              </div>
+            </section>
+          </main>
+
+          {/* Footer */}
+          <footer className="border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#111110] py-8 text-center text-xs text-neutral-400 font-mono">
+            <div>Claude Design System (CDS) • All-in-One Component Showcase</div>
+            <div className="mt-1 text-[11px] text-neutral-500">
+              Extracted directly from production Claude.app • Zero external bundle dependency
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+</body>
+</html>
